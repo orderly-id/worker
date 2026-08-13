@@ -2031,6 +2031,8 @@ Such behavior would violate the Worker isolation model.
 
 # 75. Future SDK Capabilities
 
+The SDK MAY later expose typed rich-message actions, invitation commands, public directory search, account setting capabilities, and activity recording for approved system Workers. These APIs MUST remain runtime-enforced and MUST NOT expose raw Core database access. The initial product proposal is documented in `Orderly Helper Design Guide.md`.
+
 Potential future namespaces:
 
 ```text

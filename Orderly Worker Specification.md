@@ -1124,6 +1124,8 @@ This allows Orderly Core infrastructure to evolve without unnecessarily breaking
 
 # 25. Official and Third-Party Workers
 
+Official system-managed Workers MAY diprovisikan otomatis untuk setiap user. Instance tersebut tetap MUST memiliki ID internal unik, version, storage scope, permission grant, dan audit trail. Reserved account-scoped handles seperti `@orderly.helper` MUST NOT digunakan sebagai pengganti ID internal atau diberikan kepada Worker pihak ketiga. Lihat `Orderly Helper Design Guide.md` untuk proposal konkret.
+
 Official Orderly Workers SHOULD use the same public Worker architecture whenever practical.
 
 Conceptually:

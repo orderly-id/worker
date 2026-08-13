@@ -1313,6 +1313,8 @@ Core database
 
 # 58. Core-to-Worker Communication
 
+System notifications and invitations SHOULD be delivered as structured events with stable event IDs and correlation IDs. Rich actions such as accepting or rejecting an invitation MUST resolve to server-validated, idempotent commands rather than free-form chat text. A system-managed Helper MAY project those events into an activity history, but MUST NOT copy secrets or complete conversations into the projection. See `Orderly Helper Design Guide.md`.
+
 Orderly communicates with Workers through documented runtime contracts.
 
 Examples:

@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "id": "wrk_01k2notes000000000000000001",
+  "name": "Notes",
+  "slug": "notes",
+  "version": "0.1.0",
+  "description": "Simpan dan kelola catatan dalam satu Worker Instance.",
+  "publisher": {
+    "name": "Orderly"
+  },
+  "frontend": {
+    "type": "none"
+  },
+  "permissions": [
+    "chat:read-current",
+    "chat:write-current",
+    "storage:read",
+    "storage:write"
+  ],
+  "events": [
+    "chat.message"
+  ],
+  "data": {
+    "models": [
+      {
+        "name": "notes",
+        "fields": {
+          "id": {
+            "type": "uuid",
+            "primary": true
+          },
+          "content": {
+            "type": "text",
+            "required": true
+          },
+          "created_at": {
+            "type": "datetime"
+          }
+        }
+      }
+    ]
+  }
+}
