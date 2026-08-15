@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import worker from './index.js'; import { createTestContext, dispatchAction, dispatchMessage } from '../../../../sdk/testing.js'
+test('creates and completes a task', async()=>{ const h=createTestContext(); const task=await dispatchMessage(worker,'tugas Kirim laporan',h.ctx); const done=await dispatchAction(worker,'complete',{id:task.id},h.ctx); assert.equal(done.status,'done') })

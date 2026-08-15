@@ -1,0 +1,2 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import worker from './index.js'; import { createTestContext, dispatchMessage } from '../../../../sdk/testing.js'
+test('relays with instance config and secret',async()=>{ const h=createTestContext({config:{endpoint:'https://example.test/hook'},secrets:{secret:'test-secret'}}); await dispatchMessage(worker,'hello',h.ctx); assert.equal(h.requests.length,1); assert.equal(h.replies[0],'Webhook terkirim.') })

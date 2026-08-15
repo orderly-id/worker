@@ -1,0 +1,10 @@
+{
+  "name": "@orderly/worker-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test workers/**/*.test.js templates/**/*.test.js",
+    "validate": "node tools/validate-workers.js",
+    "check": "npm run validate && npm test"
+  }
+}

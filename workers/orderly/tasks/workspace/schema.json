@@ -1,0 +1,1 @@
+{"version":1,"title":"Tasks","view":{"type":"collection","model":"tasks","primary":"title","badge":"status"},"actions":["complete","list"]}

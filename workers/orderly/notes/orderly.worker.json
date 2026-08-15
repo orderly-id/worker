@@ -8,9 +8,11 @@
   "publisher": {
     "name": "Orderly"
   },
-  "frontend": {
-    "type": "none"
+  "assets": {
+    "avatar": "assets/avatar.png"
   },
+  "entry": "src/index.js",
+  "frontend": { "type": "schema", "entry": "workspace/schema.json" },
   "permissions": [
     "chat:read-current",
     "chat:write-current",
@@ -20,6 +22,21 @@
   "events": [
     "chat.message"
   ],
+  "ai": {
+    "provider": "platform",
+    "system_prompt": "Anda adalah Worker Notes. Pahami pesan berbahasa Indonesia atau Inggris. Pilih satu aksi yang aman. Jangan mengarang folder yang tidak tersedia. Untuk create_note, pertahankan isi penting pengguna dan buat judul ringkas. Untuk pertanyaan atau daftar, jawab ringkas melalui field reply.",
+    "action_schema": {
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "enum": ["create_note", "create_folder", "list_notes", "answer"] },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "folder": { "type": "string" },
+        "reply": { "type": "string" }
+      },
+      "required": ["action", "reply"]
+    }
+  },
   "data": {
     "models": [
       {
@@ -33,6 +50,8 @@
             "type": "text",
             "required": true
           },
+          "title": { "type": "string", "required": true },
+          "folder": { "type": "string", "required": true },
           "created_at": {
             "type": "datetime"
           }

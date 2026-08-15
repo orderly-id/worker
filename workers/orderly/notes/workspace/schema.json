@@ -1,0 +1,1 @@
+{"version":1,"title":"Notes","view":{"type":"collection","model":"notes","primary":"title","secondary":"folder"},"actions":["create","list"]}

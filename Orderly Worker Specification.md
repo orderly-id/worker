@@ -319,7 +319,7 @@ The human-readable Worker name MUST NOT be relied upon as the sole internal iden
 
 Every Worker Instance MUST receive a unique internal identifier.
 
-It SHOULD additionally receive a human-readable public Worker ID.
+It SHOULD additionally receive a human-readable public **Instance Name**.
 
 Recommended format:
 
@@ -347,26 +347,26 @@ The suffix SHOULD use characters that are reasonably easy for humans to distingu
 
 ---
 
-## 4.3 Display Name and Worker ID
+## 4.3 Instance Label and Instance Name
 
-The instance display name and Worker ID MUST be treated as separate concepts.
+The optional instance label and public Instance Name MUST be treated as separate concepts.
 
 Example:
 
 ```text
-Display Name:
+Instance Label:
 Harian
 
 Worker:
 Notes Worker
 
-Worker ID:
+Instance Name:
 @harian.a45fc
 ```
 
-Changing the display name MUST NOT require changing the Worker ID.
+Changing the instance label MUST NOT require changing the Instance Name.
 
-Implementations SHOULD treat Worker IDs as stable identifiers.
+Implementations SHOULD treat Instance Names as stable public handles.
 
 ---
 
@@ -389,7 +389,7 @@ Use
 Create Instance
      │
      ▼
-Instance Name
+Instance Label
      │
      ▼
 Create
@@ -403,10 +403,10 @@ Example:
 ```text
 Notes Worker
 
-Instance Name
+Instance Label
 [ Harian ]
 
-Worker ID
+Instance Name
 @harian.a45fc
 
 [ Create Instance ]

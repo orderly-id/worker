@@ -1,0 +1,1 @@
+{"schema_version":"1","id":"wrk_replace_with_stable_id","name":"Example Worker","slug":"basic-worker","version":"0.1.0","description":"Describe one focused Worker responsibility.","publisher":{"name":"Your Name"},"entry":"src/index.js","frontend":{"type":"none"},"permissions":["chat:read-current","chat:write-current"],"events":["chat.message"]}

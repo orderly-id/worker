@@ -1002,16 +1002,16 @@ Orderly MAY use this metadata to automatically generate the Create Instance inte
 
 ---
 
-# 25. Standard Instance Name
+# 25. Standard Instance Label
 
-Every Worker Instance MUST have a display name.
+Every Worker Instance SHOULD have a human-readable label in addition to its generated public Instance Name.
 
 Orderly SHOULD provide the standard `name` field even if the Worker does not declare it explicitly.
 
 Conceptually:
 
 ```text
-Instance Name
+Instance Label
 [ Harian ]
 ```
 
