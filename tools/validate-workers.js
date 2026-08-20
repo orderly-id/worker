@@ -4,6 +4,7 @@ import { join } from 'node:path'
 const root = new URL('../workers/', import.meta.url)
 const required = ['schema_version', 'id', 'name', 'slug', 'version', 'description', 'publisher', 'permissions']
 const ids = new Set()
+const instanceNames = new Set()
 let count = 0
 
 for (const publisher of await readdir(root)) {
@@ -15,6 +16,9 @@ for (const publisher of await readdir(root)) {
     if (missing.length) throw new Error(`${path}: missing ${missing.join(', ')}`)
     if (manifest.slug !== slug) throw new Error(`${path}: slug must match directory`)
     if (ids.has(manifest.id)) throw new Error(`${path}: duplicate id ${manifest.id}`)
+    const defaultName = manifest.instance?.default_name
+    if (typeof defaultName !== 'string' || !/^[a-z0-9]+(?:[a-z0-9_-]*[a-z0-9])?$/.test(defaultName)) throw new Error(`${path}: instance.default_name must be route-safe`)
+    if (instanceNames.has(defaultName)) throw new Error(`${path}: duplicate instance.default_name ${defaultName}`)
     if (!Array.isArray(manifest.permissions)) throw new Error(`${path}: permissions must be an array`)
     if (manifest.assets?.avatar) await access(join(root.pathname, publisher, slug, manifest.assets.avatar))
     if (manifest.ai) {
@@ -22,7 +26,7 @@ for (const publisher of await readdir(root)) {
       if (!manifest.ai.system_prompt || typeof manifest.ai.system_prompt !== 'string') throw new Error(`${path}: ai.system_prompt is required`)
       if (!manifest.ai.action_schema || typeof manifest.ai.action_schema !== 'object') throw new Error(`${path}: ai.action_schema is required`)
     }
-    ids.add(manifest.id); count += 1
+    ids.add(manifest.id); instanceNames.add(defaultName); count += 1
   }
 }
 if (!count) throw new Error('No Worker manifests found')

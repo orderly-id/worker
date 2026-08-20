@@ -2,6 +2,18 @@
 
 Repository ini adalah rumah kontrak, template, dan Worker resmi Orderly. Worker tidak mengimpor kode internal Phoenix/Vue; seluruh perilaku menggunakan context SDK yang juga dipakai test harness.
 
+## Identitas instance
+
+Setiap Worker Instance memiliki UUID internal dan public **Instance Name** dengan format:
+
+```text
+@{instance-name}.{owner-username}
+```
+
+Contoh: Worker Notes menyediakan default instance name `notes`. Jika `@rizalsambayu` menggunakan Notes, Orderly membuat `@notes.rizalsambayu` dengan halaman utama `/@notes.rizalsambayu`.
+
+Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. User tetap dapat menjadi Editor atau Guest pada instance milik user lain; membership tersebut tidak membuat instance baru dan tidak mengubah owner. Public Instance Name tidak menggantikan UUID internal untuk authorization, storage scope, relasi, atau event.
+
 ## Mulai cepat
 
 ```bash

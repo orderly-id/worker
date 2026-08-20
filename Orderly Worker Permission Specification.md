@@ -896,7 +896,7 @@ Requests:
 Instance:
 
 ```text
-@harian.a45fc
+@notes.rizalsambayu
 
 Granted:
 ✓ chat:read-current
@@ -1230,9 +1230,9 @@ Where practical, users SHOULD be able to review active permissions for a Worker 
 Example:
 
 ```text
-Harian
+Catatan Kerja
 Notes Worker
-@harian.a45fc
+@notes.rizalsambayu
 
 Permissions
 
@@ -1611,7 +1611,7 @@ MUST remain unavailable.
 
 # 60. Official Workers
 
-Official status MUST NOT imply unrestricted Core access. Orderly Helper and other system-managed Workers MUST use narrow, auditable capabilities for account mutations, invitation responses, public directory search, and activity writes. AI output MUST NOT bypass runtime authorization or confirmation policy. Capability grants to another Worker Instance MUST be explicit, scoped to the target instance and role, revocable, and non-transitive by default. See `Orderly Helper Design Guide.md`.
+Official status MUST NOT imply unrestricted Core access. Orderly Assistant and other system-managed Workers MUST use narrow, auditable capabilities for account mutations, invitation responses, public directory search, and activity writes. AI output MUST NOT bypass runtime authorization or confirmation policy. Capability grants to another Worker Instance MUST be explicit, scoped to the target instance and role, revocable, and non-transitive by default. See `Orderly Assistant Design Guide.md`.
 
 Official Orderly Workers SHOULD use the same public permission model whenever practical.
 
@@ -1674,7 +1674,7 @@ Worker:
 External CRM
 
 Instance:
-@crm.a45fc
+@crm.rizalsambayu
 
 Capability:
 http:request
@@ -1743,7 +1743,7 @@ Use
       ▼
 Create Instance
       │
-      ├── Instance Name
+      ├── Instance Label / Name Segment
       ├── Configuration
       └── Permission Summary
       │
@@ -1778,7 +1778,7 @@ Example:
 
 ```text
 instance:
-@harian.a45fc
+@notes.rizalsambayu
 
 permission:
 chat:read-current

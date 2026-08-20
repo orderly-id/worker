@@ -1,0 +1,20 @@
+{
+  "schema_version": "1",
+  "id": "wrk_orderly_helper_000000000000001",
+  "name": "Orderly Assistant",
+  "slug": "assistant",
+  "version": "0.1.0",
+  "description": "Asisten sistem bawaan untuk notifikasi, histori aksi, dan pengaturan akun Orderly.",
+  "publisher": { "name": "Orderly" },
+  "instance": { "default_name": "assistant" },
+  "built_in": true,
+  "system_managed": true,
+  "frontend": { "type": "none" },
+  "permissions": [
+    "notification:read",
+    "notification:write",
+    "account:read",
+    "account:write"
+  ],
+  "events": []
+}

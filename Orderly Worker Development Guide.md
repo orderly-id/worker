@@ -10,7 +10,7 @@
 
 Orderly Worker is the extension platform for adding applications, automation, integrations, AI behavior, data models, and custom interfaces to Orderly without merging every feature into Orderly Core.
 
-All Workers—whether developed by Orderly, a contributor, or an Orderly user—are developed and versioned in the dedicated `worker` repository. A validated Worker release can then be published to Worker Store, discovered by users, and installed as one or more isolated Worker Instances.
+All Workers—whether developed by Orderly, a contributor, or an Orderly user—are developed and versioned in the dedicated `worker` repository. A validated Worker release can then be published to Worker Store, discovered by users, and installed as isolated Worker Instances. Each user may own at most one instance of a given Worker Definition, while a Worker Definition may still have many instances owned by different users across the platform.
 
 This guide turns the existing draft specifications into a practical development direction. The specifications remain important references, but they are not treated as proof that every described capability already exists. During development, documentation MUST follow the real implementation. If implementation and a draft document disagree, the difference must be recorded and resolved deliberately.
 
@@ -63,7 +63,7 @@ Users and contributors should not need to add Vue pages, Phoenix controllers, Ec
 
 ## 3. Sources of Truth
 
-Desain worker sistem bawaan, inbox notifikasi, action akun, dan activity history dibahas dalam `Orderly Helper Design Guide.md`. Dokumen tersebut adalah proposal tambahan; jika bertentangan dengan security boundary pada Permission atau Runtime Specification, aturan yang lebih ketat berlaku.
+Desain Worker sistem bawaan, inbox notifikasi, action akun, dan activity history dibahas dalam `Orderly Assistant Design Guide.md`. Dokumen tersebut adalah panduan tambahan; jika bertentangan dengan security boundary pada Permission atau Runtime Specification, aturan yang lebih ketat berlaku.
 
 Worker development uses three levels of documentation:
 
@@ -263,6 +263,29 @@ Workers created by users may initially remain private or unlisted. Public public
 
 ---
 
+## 7.1 Instance Ownership and Public Naming
+
+Every instance has an immutable internal UUID and a public Instance Name:
+
+```text
+@{instance-name}.{owner-username}
+```
+
+The Worker manifest SHOULD provide a default instance-name segment. Notes defaults to `notes`; therefore Notes owned by `@rizalsambayu` is `@notes.rizalsambayu` and opens at `/@notes.rizalsambayu`.
+
+The platform MUST enforce:
+
+- at most one owned instance for each `(owner, Worker Definition)` pair;
+- global uniqueness of the composed public Instance Name;
+- uniqueness of the instance-name segment within an owner's namespace;
+- membership access separately from ownership.
+
+Accepting an invitation as Editor or Guest adds access to the owner's existing instance. It does not create another owned instance and does not change the handle suffix. Internal APIs, storage, events, permission checks, and relationships MUST use the instance UUID after resolving a public handle.
+
+The display label and instance-name segment are separate. A label such as `Catatan Kerja` may change without changing the UUID. If the platform permits changing the instance-name segment, it MUST validate the new composed handle and update the canonical route atomically.
+
+---
+
 ## 8. Data and Storage Models
 
 A Worker chooses one of the following storage modes explicitly.
@@ -385,7 +408,7 @@ Recommended conceptual API:
 
 ```ts
 await ctx.workers.call({
-  instance: "@inventory.a82kd",
+  instance: "@inventory.rizalsambayu",
   action: "inventory.stock.check",
   input: { product_id: "p_123", quantity: 2 }
 });
@@ -591,6 +614,7 @@ A suitable first Worker should demonstrate:
 - one chat event;
 - one reply;
 - one instance-scoped data model;
+- one-instance-per-owner-and-definition enforcement;
 - create/list behavior;
 - permission denial tests;
 - a minimal Workspace or API view after the backend contract works;

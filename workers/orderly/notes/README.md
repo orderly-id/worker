@@ -13,7 +13,9 @@ Worker reference yang dapat diuji. Handler Chat membuat catatan, action menyedia
 - Publisher: `Orderly`
 - Version: `0.1.0`
 
-Nama Worker tidak harus unik. `Worker ID` adalah identitas internal Worker Definition yang unik dan tidak berubah. User menentukan label instance, lalu Orderly menghasilkan public **Instance Name** dengan format `@{slug-label}.{5-karakter-acak}`, misalnya `@catatan-pribadi.a45fc`. UUID terpisah tetap digunakan sebagai Internal ID instance.
+Nama Worker tidak harus unik. `Worker ID` adalah identitas internal Worker Definition yang unik dan tidak berubah. Notes menyediakan default instance name `notes`. Public **Instance Name** dibentuk dengan format `@{instance-name}.{owner-username}`. Jika `@rizalsambayu` menggunakan Notes, instance yang dibuat adalah `@notes.rizalsambayu` dan halaman utamanya `/@notes.rizalsambayu`. UUID terpisah tetap digunakan sebagai Internal ID instance.
+
+Seorang user hanya dapat memiliki satu instance Notes. Menjadi Editor atau Guest pada Notes milik user lain hanya menambah membership dan tidak membuat instance Notes kedua milik user tersebut. Display label MAY diubah tanpa mengubah Worker Definition atau UUID internal; perubahan instance-name segment harus tetap unik dalam namespace owner.
 
 ## Chat
 

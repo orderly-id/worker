@@ -133,8 +133,12 @@ Every Worker request MUST resolve to a specific Worker Instance.
 Example:
 
 ```text
-@harian.a45fc
+@notes.rizalsambayu
 ```
+
+The public handle format is `@{instance-name}.{owner-username}` and the corresponding public page is `/@{instance-name}.{owner-username}`. Resolution MUST normalize both segments, find exactly one instance, and then continue with its internal UUID. A handle alone never proves authorization.
+
+The runtime and creation service MUST assume that an owner can own at most one instance of a Worker Definition. Database uniqueness for `(owner_user_id, worker_definition_id)` is the final concurrency guard; runtime pre-checks are only user-facing validation.
 
 The platform resolves:
 
@@ -161,7 +165,7 @@ Example:
 
 ```text
 Instance:
-@harian.a45fc
+@notes.rizalsambayu
 
 Worker:
 notes
@@ -354,10 +358,15 @@ Example:
 ```ts
 ctx.instance.id
 ctx.instance.workerId
-ctx.instance.name
+ctx.instance.label
+ctx.instance.nameSegment
+ctx.instance.instanceName
+ctx.instance.ownerUsername
 ctx.instance.workerSlug
 ctx.instance.workerVersion
 ```
+
+`instanceName` is always the complete public handle, such as `@notes.rizalsambayu`; `nameSegment` is the route-safe `notes` portion and `label` is an optional display label. Runtime authorization and storage scope still use `id`.
 
 Sensitive owner or member information SHOULD require explicit capabilities.
 
@@ -530,7 +539,7 @@ Worker routes declared in the manifest SHOULD be resolved through the Worker Gat
 Example:
 
 ```text
-GET /api/workers/@harian.a45fc/notes
+GET /api/workers/@notes.rizalsambayu/notes
 ```
 
 Flow:
@@ -965,14 +974,14 @@ One Worker MUST NOT be able to exhaust resources required by unrelated Workers o
 
 # 41. Concurrency
 
-Multiple instances MAY execute simultaneously.
+Instances owned by different users and instances from different Worker Definitions MAY execute simultaneously. The platform MUST still enforce at most one owned instance per `(owner, Worker Definition)`.
 
 Example:
 
 ```text
-@harian.a45fc
-@sekolah.b82kd
-@kasir.72kmp
+@notes.rizalsambayu
+@notes.elsafira
+@kasir.rizalsambayu
 ```
 
 The Runtime MUST ensure concurrent execution does not mix instance state.
@@ -1247,7 +1256,7 @@ Notes Worker 1.0.0
       │
       ▼
 Test Instance
-@test-notes.xxxxx
+@notes.worker-test
 ```
 
 The test instance SHOULD remain isolated from production user instances.
@@ -1313,7 +1322,7 @@ Core database
 
 # 58. Core-to-Worker Communication
 
-System notifications and invitations SHOULD be delivered as structured events with stable event IDs and correlation IDs. Rich actions such as accepting or rejecting an invitation MUST resolve to server-validated, idempotent commands rather than free-form chat text. A system-managed Helper MAY project those events into an activity history, but MUST NOT copy secrets or complete conversations into the projection. See `Orderly Helper Design Guide.md`.
+System notifications and invitations SHOULD be delivered as structured events with stable event IDs and correlation IDs. Rich actions such as accepting or rejecting an invitation MUST resolve to server-validated, idempotent commands rather than free-form chat text. The system-managed Orderly Assistant MAY project those events into an activity history, but MUST NOT copy secrets or complete conversations into the projection. See `Orderly Assistant Design Guide.md`.
 
 Orderly communicates with Workers through documented runtime contracts.
 
@@ -1526,7 +1535,7 @@ Worker developers should depend on documented runtime APIs rather than internal 
 User sends:
 
 ```text
-@harian.a45fc catat meeting jam 10
+@notes.rizalsambayu catat meeting jam 10
 ```
 
 Runtime flow:
@@ -1535,7 +1544,7 @@ Runtime flow:
 Chat
   │
   ▼
-Resolve @harian.a45fc
+Resolve @notes.rizalsambayu
   │
   ▼
 Instance

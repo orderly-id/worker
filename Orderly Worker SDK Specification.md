@@ -155,7 +155,7 @@ Example:
 ```ts
 export default defineWorker({
   async onMessage(ctx) {
-    console.log(ctx.instance.name);
+    console.log(ctx.instance.instanceName);
 
     const message = ctx.message.text;
 
@@ -179,8 +179,10 @@ Example:
 ```ts
 ctx.instance.id
 ctx.instance.workerId
-ctx.instance.name
-ctx.instance.slug
+ctx.instance.label
+ctx.instance.nameSegment
+ctx.instance.instanceName
+ctx.instance.ownerUsername
 ctx.instance.workerSlug
 ctx.instance.workerVersion
 ```
@@ -191,12 +193,16 @@ Possible conceptual interface:
 interface WorkerInstance {
   id: string;
   workerId: string;
-  name: string;
-  slug: string;
+  label: string | null;
+  nameSegment: string;
+  instanceName: string;
+  ownerUsername: string;
   workerSlug: string;
   workerVersion: string;
 }
 ```
+
+`instanceName` is the complete public handle and MUST use `@{nameSegment}.{ownerUsername}`. It maps to `/{instanceName}` (for example `/@notes.rizalsambayu`). `label` is only an optional display label. SDK code MUST use `id` for storage, permission, and event scope. Instance creation is a Core lifecycle operation and MUST reject a second owned instance for the same user and Worker Definition.
 
 Example values:
 
@@ -205,13 +211,19 @@ id:
 550e8400-e29b-41d4-a716-446655440000
 
 workerId:
-@harian.a45fc
+wrk_01k2notes000000000000000001
 
-name:
-Harian
+label:
+Catatan Kerja
 
-slug:
-harian
+nameSegment:
+notes
+
+instanceName:
+@notes.rizalsambayu
+
+ownerUsername:
+rizalsambayu
 
 workerSlug:
 notes
@@ -2031,7 +2043,7 @@ Such behavior would violate the Worker isolation model.
 
 # 75. Future SDK Capabilities
 
-The SDK MAY later expose typed rich-message actions, invitation commands, public directory search, account setting capabilities, and activity recording for approved system Workers. These APIs MUST remain runtime-enforced and MUST NOT expose raw Core database access. The initial product proposal is documented in `Orderly Helper Design Guide.md`.
+The SDK MAY later expose typed rich-message actions, invitation commands, public directory search, account setting capabilities, and activity recording for approved system Workers. These APIs MUST remain runtime-enforced and MUST NOT expose raw Core database access. The Orderly Assistant direction is documented in `Orderly Assistant Design Guide.md`.
 
 Potential future namespaces:
 
@@ -2061,7 +2073,7 @@ Conceptually:
 
 ```ts
 ctx.workers.call({
-  workerId: "@inventory.a82kd",
+  instance: "@inventory.rizalsambayu",
   action: "stock.check",
   input: {
     productId: "..."

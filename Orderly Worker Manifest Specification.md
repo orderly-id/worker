@@ -140,12 +140,13 @@ A minimal Worker manifest may look like:
   },
 
   "instance": {
+    "default_name": "notes",
     "fields": [
       {
-        "key": "name",
-        "label": "Instance Name",
+        "key": "label",
+        "label": "Instance Label",
         "type": "text",
-        "required": true
+        "required": false
       },
       {
         "key": "description",
@@ -986,12 +987,13 @@ Example:
 ```json
 {
   "instance": {
+    "default_name": "notes",
     "fields": [
       {
-        "key": "name",
-        "label": "Instance Name",
+        "key": "label",
+        "label": "Instance Label",
         "type": "text",
-        "required": true
+        "required": false
       }
     ]
   }
@@ -1000,13 +1002,30 @@ Example:
 
 Orderly MAY use this metadata to automatically generate the Create Instance interface.
 
+`default_name` defines the default route-safe instance-name segment. The public Instance Name is composed by Core, not by Worker code:
+
+```text
+@{instance.default_name-or-selected-name}.{owner-username}
+```
+
+For Notes, `default_name: "notes"` and owner `@rizalsambayu` produce `@notes.rizalsambayu` and `/@notes.rizalsambayu`.
+
+Requirements:
+
+- `default_name` MUST use lowercase ASCII letters, numbers, and hyphens;
+- Core MUST normalize and validate any user-editable instance-name segment;
+- Core MUST enforce one owned instance per `(owner, Worker Definition)`;
+- Core MUST enforce uniqueness of the composed public Instance Name;
+- Worker packages MUST NOT generate random public suffixes;
+- the internal instance UUID remains the authority for storage, permissions, and relations.
+
 ---
 
 # 25. Standard Instance Label
 
-Every Worker Instance SHOULD have a human-readable label in addition to its generated public Instance Name.
+Every Worker Instance SHOULD have a human-readable label in addition to its composed public Instance Name.
 
-Orderly SHOULD provide the standard `name` field even if the Worker does not declare it explicitly.
+Orderly SHOULD provide the standard `label` field even if the Worker does not declare it explicitly.
 
 Conceptually:
 
@@ -1026,12 +1045,13 @@ Example Finance Worker:
 ```json
 {
   "instance": {
+    "default_name": "finance",
     "fields": [
       {
-        "key": "name",
-        "label": "Instance Name",
+        "key": "label",
+        "label": "Instance Label",
         "type": "text",
-        "required": true
+        "required": false
       },
       {
         "key": "business_name",
@@ -1065,8 +1085,11 @@ Orderly could generate:
 ```text
 Finance Worker
 
-Instance Name
+Instance Label
 [ Toko Utama ]
+
+Public Instance Name
+@finance.rizalsambayu
 
 Business Name
 [ Toko Sembada ]
@@ -1691,12 +1714,13 @@ security investigation
   },
 
   "instance": {
+    "default_name": "notes",
     "fields": [
       {
-        "key": "name",
-        "label": "Instance Name",
+        "key": "label",
+        "label": "Instance Label",
         "type": "text",
-        "required": true
+        "required": false
       },
       {
         "key": "description",
@@ -1828,12 +1852,13 @@ security investigation
   },
 
   "instance": {
+    "default_name": "restaurant",
     "fields": [
       {
-        "key": "name",
-        "label": "Instance Name",
+        "key": "label",
+        "label": "Instance Label",
         "type": "text",
-        "required": true
+        "required": false
       },
       {
         "key": "business_name",

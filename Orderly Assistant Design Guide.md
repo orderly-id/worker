@@ -1,23 +1,23 @@
-# Orderly Helper Design Guide
+# Orderly Assistant Design Guide
 
 Status: proposal pengembangan, bukan kontrak stabil.
 
 ## 1. Keputusan nama
 
-Nama Worker yang direkomendasikan adalah **Orderly Helper** dengan public handle bawaan **`@orderly.helper`**. Nama ini membedakan asisten sistem dari merek Orderly dan dari instance buatan user.
+Nama Worker adalah **Orderly Assistant** dengan default instance name **`assistant`**. Sesuai kontrak Worker Instance, public handle dibentuk sebagai **`@assistant.{owner-username}`**. Contoh milik `@rizalsambayu` adalah `@assistant.rizalsambayu` dengan halaman `/@assistant.rizalsambayu`.
 
-Setiap user memiliki tepat satu instance sistem Orderly Helper. Handle tampilannya boleh sama untuk semua user karena resolusi dilakukan dalam konteks akun aktif, tetapi setiap instance MUST memiliki UUID internal unik dan owner user yang unik di database.
+Setiap user memiliki tepat satu instance sistem Orderly Assistant. Handle bersifat global dan memuat username owner, sementara setiap instance MUST memiliki UUID internal unik dan owner user yang unik di database.
 
 ```text
-User A -> helper_instance_uuid_a -> @orderly.helper
-User B -> helper_instance_uuid_b -> @orderly.helper
+@user-a -> assistant_instance_uuid_a -> @assistant.user-a
+@user-b -> assistant_instance_uuid_b -> @assistant.user-b
 ```
 
 Instance ini dibuat otomatis ketika akun diaktifkan atau melalui proses backfill idempoten. Ia tidak berasal dari tindakan `Gunakan` di Worker Store dan tidak boleh dipindahkan kepemilikannya.
 
 ## 2. Tujuan
 
-Orderly Helper adalah worker sistem bawaan yang menjadi:
+Orderly Assistant adalah worker sistem bawaan yang menjadi:
 
 - inbox notifikasi dan undangan;
 - antarmuka percakapan untuk pengaturan akun;
@@ -25,16 +25,26 @@ Orderly Helper adalah worker sistem bawaan yang menjadi:
 - koordinator tindakan antar-user dan antar-worker;
 - histori ringkas tindakan dan notifikasi.
 
-Orderly Helper bukan administrator tanpa batas. Semua tindakan tetap melalui capability, permission, validasi, dan audit Orderly Core.
+Orderly Assistant bukan administrator tanpa batas. Semua tindakan tetap melalui capability, permission, validasi, dan audit Orderly Core.
+
+## 2.1 Primary Worker direction
+
+Orderly Assistant adalah Worker utama milik user dan menjadi titik koordinasi masa depan:
+
+```text
+User → Orderly Assistant → Other Workers
+```
+
+Implementasi saat ini hanya mempertahankan perilaku yang sudah tersedia, terutama notifikasi, undangan, chat, dan activity history. Delegasi atau kontrol Worker lain tidak boleh diasumsikan tersedia sampai ada capability, permission grant, audit, dan kontrak runtime yang eksplisit.
 
 ## 3. Chat dan Workspace
 
-Chat menyimpan percakapan interaktif. Workspace Helper menampilkan **activity history**, bukan salinan percakapan penuh.
+Chat menyimpan percakapan interaktif. Workspace Assistant menampilkan **activity history**, bukan salinan percakapan penuh.
 
 Contoh activity:
 
 ```text
-@temanmu mengundang Anda ke @notes-kerja.b8sj8.
+@temanmu mengundang Anda ke @notes.temanmu.
 Anda menerima undangan sebagai Editor pukul 10.14.
 Anda mengubah tema profil menjadi hijau pukul 11.02.
 Anda menambahkan link GitHub “Project Saya” pukul 11.08.
@@ -45,10 +55,10 @@ Activity record SHOULD menyimpan jenis aksi, actor, target, status, ringkasan am
 
 ## 4. Undangan dengan rich action
 
-Undangan workspace dikirim sebagai pesan sistem terstruktur di chat Helper.
+Undangan workspace dikirim sebagai pesan sistem terstruktur di chat Assistant.
 
 ```text
-@temanmu mengundangmu ke workspace @notes-kerja.b8sj8 sebagai Editor.
+@temanmu mengundangmu ke workspace @notes.temanmu sebagai Editor.
 
 [Terima] [Tolak]
 ```
@@ -74,9 +84,9 @@ Contoh:
 “Tambahkan link GitHub ini dengan judul Project Saya.”
 ```
 
-Helper harus mengubah intent menjadi action plan terstruktur. Tindakan berisiko rendah MAY dieksekusi langsung jika user sudah mengaktifkan preferensi tersebut. Tindakan destruktif, sensitif, ambigu, eksternal, atau berdampak luas MUST meminta konfirmasi eksplisit.
+Assistant harus mengubah intent menjadi action plan terstruktur. Tindakan berisiko rendah MAY dieksekusi langsung jika user sudah mengaktifkan preferensi tersebut. Tindakan destruktif, sensitif, ambigu, eksternal, atau berdampak luas MUST meminta konfirmasi eksplisit.
 
-Orderly Helper MUST menggunakan capability sempit seperti:
+Orderly Assistant MUST menggunakan capability sempit seperti:
 
 ```text
 account.profile.theme.write
@@ -90,13 +100,13 @@ Ia MUST NOT memperoleh raw database access atau capability generik seperti `acco
 
 ## 6. Pencarian dan rekomendasi
 
-Helper MAY mencari profil publik Orderly untuk memenuhi permintaan user dan memberi link langsung ke hasil yang relevan. Pencarian harus menghormati visibilitas profil, rate limit, ranking yang dapat dijelaskan, serta tidak mengekspos email, nomor telepon, atau data nonpublik.
+Assistant MAY mencari profil publik Orderly untuk memenuhi permintaan user dan memberi link langsung ke hasil yang relevan. Pencarian harus menghormati visibilitas profil, rate limit, ranking yang dapat dijelaskan, serta tidak mengekspos email, nomor telepon, atau data nonpublik.
 
-Rekomendasi web eksternal, misalnya kafe di Jogja, memerlukan provider pencarian yang dikonfigurasi dan permission HTTP/search. Hasil SHOULD menyertakan sumber dan waktu pencarian. Jika provider belum tersedia, Helper harus menjelaskan keterbatasan dan tidak mengarang hasil.
+Rekomendasi web eksternal, misalnya kafe di Jogja, memerlukan provider pencarian yang dikonfigurasi dan permission HTTP/search. Hasil SHOULD menyertakan sumber dan waktu pencarian. Jika provider belum tersedia, Assistant harus menjelaskan keterbatasan dan tidak mengarang hasil.
 
 ## 7. AI provider
 
-Orderly Helper dapat menggunakan model yang disediakan Orderly atau API milik user. Provider AI tidak menentukan otoritas. Runtime capability dan policy server tetap menjadi security boundary.
+Orderly Assistant dapat menggunakan model yang disediakan Orderly atau API milik user. Provider AI tidak menentukan otoritas. Runtime capability dan policy server tetap menjadi security boundary.
 
 Prompt/model output MUST diperlakukan sebagai input tidak tepercaya. Model hanya mengusulkan action; Core memvalidasi identity, permission, membership, schema, confirmation policy, dan idempotency sebelum mengeksekusi.
 
@@ -106,13 +116,14 @@ Instance internal:
 
 ```text
 id: UUID unik
-worker_definition_id: ID Orderly Helper
-owner_user_id: UUID user, unik untuk helper
-public_handle: @orderly.helper
+worker_definition_id: compatibility ID Orderly Assistant
+owner_user_id: UUID user, unik untuk Assistant
+instance_name: assistant
+public_handle: @assistant.rizalsambayu
 system_managed: true
 ```
 
-Link dan event internal MUST menggunakan UUID, bukan hanya handle. Handle `@orderly.helper` bersifat account-scoped dan reserved; user atau contributor tidak boleh mendaftarkannya.
+Link dan event internal MUST menggunakan UUID, bukan hanya handle. Prefix/default instance name `assistant` untuk Worker Definition resmi Orderly Assistant bersifat reserved; user atau contributor tidak boleh mendaftarkannya untuk Worker lain. Public route mengikuti `/@assistant.{owner-username}`.
 
 ## 9. Lifecycle
 
@@ -139,11 +150,11 @@ worker_invitations
   offered_role, status, expires_at, responded_at
 
 worker_activities
-  id, helper_instance_id, actor_type, actor_id, event_type,
+  id, assistant_instance_id, actor_type, actor_id, event_type,
   target_type, target_id, summary, status, correlation_id, occurred_at
 ```
 
-`subject_type` dan `invitee_type` minimal mendukung `user` dan `worker_instance`. Database constraints MUST mencegah owner ganda yang tidak valid, membership duplikat, dan helper lebih dari satu per user.
+`subject_type` dan `invitee_type` minimal mendukung `user` dan `worker_instance`. Database constraints MUST mencegah owner ganda yang tidak valid, membership duplikat, dan Assistant lebih dari satu per user.
 
 ## 11. Event minimum
 
@@ -154,16 +165,16 @@ workspace.invitation.rejected
 workspace.membership.changed
 account.profile.theme.changed
 account.profile.link.added
-helper.search.requested
-helper.search.completed
-helper.action.failed
+assistant.search.requested
+assistant.search.completed
+assistant.action.failed
 ```
 
 Event delivery, retries, deduplication, dan correlation ID mengikuti Runtime Specification.
 
 ## 12. Tahap implementasi
 
-1. Definisi resmi Orderly Helper dan provisioning satu instance per user.
+1. Definisi resmi Orderly Assistant dan provisioning satu instance per user.
 2. Database instance, membership, invitation, dan activity.
 3. Chat rich actions Terima/Tolak dengan idempotency.
 4. Workspace activity history realtime.
@@ -172,14 +183,13 @@ Event delivery, retries, deduplication, dan correlation ID mengikuti Runtime Spe
 7. Provider AI dan pencarian eksternal.
 8. Worker-to-worker delegation dengan grant eksplisit.
 
-Implementasi lokal berbasis `localStorage` bukan sumber kebenaran untuk Helper. Fitur ini membutuhkan backend dan database sebelum dianggap aman atau realtime.
+Instance identity, ownership, dan membership Assistant sudah diprovisikan melalui backend dan PostgreSQL. Pesan, activity history, dan sebagian read-state masih memakai `localStorage` sampai persistence server untuk area tersebut selesai.
 
 ## 13. Hal yang masih perlu diputuskan
 
-- apakah Helper selalu terlihat di Worker List atau hanya Chat;
+- apakah Assistant selalu terlihat di Worker List atau hanya Chat;
 - kebijakan retensi activity dan percakapan;
 - tindakan mana yang boleh auto-execute;
 - apakah `guest` identik dengan viewer atau perlu role `viewer` terpisah;
 - sumber pencarian eksternal dan model AI default;
 - batas delegasi worker-to-worker dan mekanisme pencabutan grant.
-
