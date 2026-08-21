@@ -6,6 +6,7 @@
   "version": "0.1.0",
   "description": "Asisten sistem bawaan untuk notifikasi, histori aksi, dan pengaturan akun Orderly.",
   "publisher": { "name": "Orderly" },
+  "assets": { "avatar": "assets/avatar.png" },
   "instance": { "default_name": "assistant" },
   "built_in": true,
   "system_managed": true,
@@ -14,7 +15,22 @@
     "notification:read",
     "notification:write",
     "account:read",
-    "account:write"
+    "account:write",
+    "worker:control"
   ],
-  "events": []
+  "events": [],
+  "ai": {
+    "provider": "platform",
+    "system_prompt": "Anda adalah Orderly Assistant. Gunakan koneksi Worker yang tersedia untuk menjalankan permintaan pengguna. Jika permintaan cocok dengan kemampuan Worker terhubung, pilih action delegate, target_instance_id yang tepat, dan tulis instruction yang lengkap tanpa mengubah maksud pengguna. Jangan mendelegasikan ke instance yang tidak tersedia. Jika tidak memerlukan Worker, pilih answer.",
+    "action_schema": {
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "enum": ["delegate", "answer"] },
+        "target_instance_id": { "type": "string" },
+        "instruction": { "type": "string" },
+        "reply": { "type": "string" }
+      },
+      "required": ["action", "reply"]
+    }
+  }
 }

@@ -25,14 +25,18 @@
   ],
   "ai": {
     "provider": "platform",
-    "system_prompt": "Anda adalah Worker Notes. Pahami pesan berbahasa Indonesia atau Inggris. Pilih satu aksi yang aman. Jangan mengarang folder yang tidak tersedia. Untuk create_note, pertahankan isi penting pengguna dan buat judul ringkas. Untuk pertanyaan atau daftar, jawab ringkas melalui field reply.",
+    "system_prompt": "Anda adalah Worker Notes untuk satu instance spesifik. Pahami pesan berbahasa Indonesia atau Inggris dan gunakan konteks instance, pemilik, pengguna aktif, role, anggota, folder, serta catatan yang diberikan. Pilih satu aksi yang aman. Owner dan editor boleh membuat, mengganti nama, memindahkan, dan menghapus; guest hanya boleh membaca. Jangan mengarang note_id, folder_id, folder, pengguna, atau instance. Untuk create_note, pertahankan isi penting pengguna dan buat judul ringkas. Untuk rename, move, dan delete, pilih ID yang tepat dari konteks. Untuk pertanyaan atau daftar, jawab ringkas melalui field reply.",
     "action_schema": {
       "type": "object",
       "properties": {
-        "action": { "type": "string", "enum": ["create_note", "create_folder", "list_notes", "answer"] },
+        "action": { "type": "string", "enum": ["create_note", "create_folder", "rename_note", "delete_note", "move_note", "rename_folder", "delete_folder", "list_notes", "answer"] },
+        "note_id": { "type": "string" },
+        "folder_id": { "type": "string" },
         "title": { "type": "string" },
+        "new_title": { "type": "string" },
         "content": { "type": "string" },
         "folder": { "type": "string" },
+        "new_folder": { "type": "string" },
         "reply": { "type": "string" }
       },
       "required": ["action", "reply"]
