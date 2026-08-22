@@ -1617,6 +1617,16 @@ Orderly Platform
 
 The Runtime must allow Workers to be powerful enough to act as real applications while remaining isolated from Orderly Core and from unrelated Worker Instances.
 
+# 64. Prompt assembly, knowledge, and typed connections
+
+The Runtime assembles context in a fixed trust hierarchy: Orderly policy, Worker Definition prompt, granted tools, instance instructions, retrieved authorized knowledge, bounded conversation context, then the current message. Files, messages, external responses, connected-Worker results, and model output remain untrusted.
+
+Package resources MUST be resolved within the package and pinned to a published version/hash. Knowledge retrieval MUST authorize before ranking and return only relevant scoped content. Worker-to-Worker calls MUST use explicit typed capability grants and target-owned handlers. Event subscriptions carry minimal data and require the same grant, revocation, idempotency, and audit controls.
+
+Core adapters that directly execute Notes or another domain are transitional. The target dispatcher invokes package-owned handlers through the generic action/capability contract described in `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
+The Notes vertical slice now uses this dispatcher: Core sends authorized context and the AI action to package `onAction`; the isolated process returns an envelope; Core applies only validated capabilities. The remaining Notes-specific storage clauses are a transitional logical-model adapter and MUST be replaced by manifest-provisioned storage before arbitrary contributor models are production-ready.
+
 ---
 
 **Orderly Worker Runtime Specification — Draft 0.1**

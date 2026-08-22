@@ -2114,6 +2114,12 @@ revocable
 
 This allows third-party Workers to be powerful while keeping Orderly Core, users, and unrelated Worker Instances isolated.
 
+# 75. Knowledge and connection grants
+
+Instance knowledge permissions MUST distinguish upload/manage from runtime retrieval and MUST apply ACL filtering before content reaches a model. Editing instance instructions does not grant tools, files, contacts, network, or connected-Worker access.
+
+Worker-to-Worker grants bind source instance, target instance, capability identifier/version, role/scope, grantor, expiry, and revocation state. Grants are least-privilege, non-transitive by default, and audited. Read, write, financial, physical, and irreversible actions require separate risk and confirmation policy. See `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
 ---
 
 **Orderly Worker Permission Specification — Draft 0.1**

@@ -1,0 +1,22 @@
+[
+  {
+    "context": { "folders": [{ "id": "folder-default", "name": "Default Folder" }, { "id": "folder-work", "name": "Kerja" }] },
+    "user": "buat catatan kerja tentang rapat Jumat jam 10",
+    "assistant": { "action": "create_note", "folder_id": "folder-work", "folder_resolution": "inferred", "confidence": 0.94, "title": "Rapat Jumat", "content": "Rapat Jumat jam 10", "reply": "Catatan rapat Jumat akan disimpan di folder Kerja." }
+  },
+  {
+    "context": { "folders": [{ "id": "folder-default", "name": "Default Folder" }, { "id": "folder-personal", "name": "Pribadi" }] },
+    "user": "simpan di folder Pribadi: ulang tahun El tanggal 13 Mei",
+    "assistant": { "action": "create_note", "folder_id": "folder-personal", "folder_resolution": "explicit", "confidence": 1, "title": "Ulang tahun El", "content": "Ulang tahun El tanggal 13 Mei", "reply": "Catatan ulang tahun El akan disimpan di folder Pribadi." }
+  },
+  {
+    "context": { "folders": [{ "id": "folder-default", "name": "Default Folder" }] },
+    "user": "buat folder test",
+    "assistant": { "action": "create_folder", "folder": "Test", "folder_resolution": "not_applicable", "confidence": 0.99, "reply": "Folder Test akan dibuat." }
+  },
+  {
+    "context": { "folders": [{ "id": "folder-a", "name": "Kerja" }, { "id": "folder-b", "name": "Proyek Kerja" }] },
+    "user": "simpan catatan ini ke folder proyek",
+    "assistant": { "action": "clarify", "folder_resolution": "not_applicable", "confidence": 0.45, "reply": "Apakah catatan ini ingin disimpan di folder Kerja atau Proyek Kerja?" }
+  }
+]

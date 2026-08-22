@@ -2031,6 +2031,16 @@ Worker Platform
 
 This allows third-party developers to create new applications without modifying Orderly Core.
 
+# 78. AI resource references and connection ports
+
+An AI-capable manifest MAY keep `ai.system_prompt` and `ai.action_schema` inline, or reference package-local resources using `ai.system_prompt_file`, `ai.action_schema_file`, and `ai.examples_file`. `ai.prompt_version` SHOULD identify behavior independently from package version. References MUST remain inside the package and publication MUST resolve, validate, hash, and persist them.
+
+Manifests MAY declare instance customization types (`instructions`, `knowledge`, `templates`, `datasets`, `policies`, `assets`) with accepted formats and limits. These declarations never imply permission grants.
+
+`connections.provides` and `connections.consumes` declare typed capability ports with versioned input/output schemas and risk class. A declaration only makes a grant possible; it does not connect instances or authorize calls. See `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
+For package action execution, top-level `entry` identifies the package module. An AI-capable module may export `onAction(action, context)` and return the versioned capability envelope defined by the SDK. Declared `permissions` and `data.models` are authoritative limits: an envelope requesting an undeclared capability or logical resource MUST be rejected before execution.
+
 ---
 
 **Orderly Worker Manifest Specification — Draft 0.1**

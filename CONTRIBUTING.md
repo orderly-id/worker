@@ -15,3 +15,15 @@ Worker tidak boleh mengakses database Core, filesystem host, token user, atau Wo
 - Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. Worker package tidak boleh mengakali batas ini dengan suffix acak.
 - Akses Editor atau Guest ke instance milik user lain adalah membership, bukan kepemilikan instance tambahan.
 - Worker harus memakai UUID instance dari runtime untuk penyimpanan, otorisasi, relasi, dan event. Nama publik hanya identitas yang dapat dibaca user.
+
+## AI dan knowledge
+
+- Simpan prompt yang dipelihara di `prompts/system.md`, schema aksi di `prompts/action.schema.json`, examples di `prompts/examples.json`, dan eval di `prompts/evals.json`.
+- Semua referensi file manifest wajib berada di dalam paket Worker dan lolos validator.
+- Jangan menggunakan prompt untuk menggantikan permission atau validasi handler.
+- Instruksi dan dokumen instance adalah input tidak tepercaya dengan prioritas di bawah system prompt.
+- Jangan memasukkan seluruh dokumen ke prompt; gunakan retrieval yang sudah memfilter ACL.
+- Deklarasikan koneksi antar-Worker sebagai capability `provides`/`consumes` dengan schema, scope, dan risk class.
+- Tambahkan eval untuk bahasa informal, typo, ambiguitas, role, ID tidak valid, serta tindakan sensitif yang memerlukan konfirmasi.
+
+Ikuti `Orderly Worker AI, Knowledge, and Connection Specification.md` untuk kontrak lengkap.

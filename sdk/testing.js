@@ -30,3 +30,8 @@ export async function dispatchAction(worker, name, input, ctx) {
   if (!handler) throw new Error(`Unknown action: ${name}`)
   return handler(input, ctx)
 }
+
+export async function dispatchWorkerAction(worker, action, context = {}) {
+  if (!worker.onAction) throw new Error('Worker does not implement onAction')
+  return worker.onAction(action, structuredClone(context))
+}

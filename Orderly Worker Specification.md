@@ -1423,6 +1423,12 @@ Workers extend Orderly through defined platform contracts rather than modificati
 
 This allows Orderly to support applications, interfaces, data models, and workflows that were not known or implemented when the platform itself was created.
 
+# 31. Domain-neutral agent contract
+
+Orderly Core MUST remain domain-neutral. Notes, invoice, menu, parking, coworking, IoT, and future Workers share package, action, storage, knowledge, permission, event, connection, confirmation, and audit primitives while retaining package-owned domain logic.
+
+Publisher system prompts and schemas are versioned Worker Definition resources. Owner instructions and uploaded knowledge belong to a lower-priority instance layer. Connections expose explicitly granted typed capabilities rather than raw database access or unrestricted delegation. The complete normative contract is `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
 ---
 
 **Orderly Worker — Draft Specification 0.1**

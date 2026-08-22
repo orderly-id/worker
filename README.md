@@ -29,3 +29,9 @@ Contoh yang tersedia:
 - `webhook-relay`: konfigurasi secret dan network allowlist.
 
 Lihat [CONTRIBUTING.md](./CONTRIBUTING.md) untuk kontrak kontribusi.
+
+## AI, knowledge, dan koneksi
+
+Worker AI menggunakan prompt, action schema, examples, dan eval yang dimiliki paket Worker. Pemilik instance dapat menambahkan instruksi dan knowledge dalam lapisan yang lebih rendah tanpa memperoleh permission baru. Koneksi antar-Worker harus berupa capability terstruktur, eksplisit, scoped, dapat dicabut, dan bukan akses database atau prompt bebas.
+
+Kontrak lengkap: [Orderly Worker AI, Knowledge, and Connection Specification.md](./Orderly%20Worker%20AI%2C%20Knowledge%2C%20and%20Connection%20Specification.md).

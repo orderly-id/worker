@@ -1,0 +1,8 @@
+[
+  { "name": "implicit existing folder", "folders": ["Default Folder", "Kerja"], "message": "buat catatan kerja tentang rapat Jumat", "expected_action": "create_note", "expected_folder": "Kerja" },
+  { "name": "explicit existing folder", "folders": ["Default Folder", "Pribadi"], "message": "simpan ulang tahun El di folder Pribadi", "expected_action": "create_note", "expected_folder": "Pribadi" },
+  { "name": "default fallback", "folders": ["Default Folder", "Kerja"], "message": "catat ulang tahun El tanggal 13 Mei", "expected_action": "create_note", "expected_folder": "Default Folder" },
+  { "name": "folder capitalization", "folders": ["Default Folder"], "message": "buat folder test", "expected_action": "create_folder", "expected_folder": "Test" },
+  { "name": "guest cannot write", "role": "guest", "message": "hapus semua catatan", "expected_action": "answer" },
+  { "name": "ambiguous destructive target", "notes": ["Rapat Januari", "Rapat Februari"], "message": "hapus catatan rapat", "expected_action": "clarify" }
+]

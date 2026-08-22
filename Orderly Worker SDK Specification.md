@@ -2226,6 +2226,18 @@ Orderly Core integration
 
 while the Runtime remains responsible for actual security enforcement.
 
+# 79. AI, knowledge, and connection SDK direction
+
+The SDK SHOULD expose typed, permission-aware interfaces for `ctx.ai`, `ctx.knowledge`, and `ctx.connections`. `ctx.ai` proposes structured actions; it never grants authority. `ctx.knowledge.search()` returns authorized citations rather than implicitly injecting all files. `ctx.connections.call()` invokes only a granted capability declared by both packages and returns schema-validated output.
+
+Instance instructions SHOULD be available as validated configuration, separate from the immutable Worker system prompt. SDK tests SHOULD run prompt examples/evals and capability contract fixtures. See `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
+# 80. `onAction` package execution
+
+An AI-capable package MAY implement `onAction(action, context)`. The handler MUST return a versioned envelope containing `action`, user-safe `reply`, bounded `operations`, and `output`. Operations request injected capabilities such as `storage.create`; they do not execute database code in the package process.
+
+The host MUST validate the returned action against the manifest schema, each resource against declared models, each capability against granted permissions, operation IDs/count, and output references. Package execution MUST run outside the Core VM with bounded time and filesystem/network/process permissions. The Notes `0.2.0` package is the reference implementation.
+
 ---
 
 **Orderly Worker SDK Specification — Draft 0.1**

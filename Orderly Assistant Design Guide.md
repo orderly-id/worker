@@ -193,3 +193,9 @@ Instance identity, ownership, dan membership Assistant sudah diprovisikan melalu
 - apakah `guest` identik dengan viewer atau perlu role `viewer` terpisah;
 - sumber pencarian eksternal dan model AI default;
 - batas delegasi worker-to-worker dan mekanisme pencabutan grant.
+
+## 14. Typed orchestration direction
+
+Orderly Assistant is the user's primary coordinator, but orchestration MUST use the same typed connection contract as other Workers. A connection lists granted capabilities per target instance; it does not expose target storage or create transitive authority. Assistant may search/read or request an action only when the target publishes that capability and the owner grants it. Financial, physical, sensitive, and irreversible calls remain subject to confirmation outside the model.
+
+Assistant instance instructions and knowledge use the lower-priority instance layer. They cannot override Orderly policy, package system instructions, permission grants, or audit requirements. Follow `Orderly Worker AI, Knowledge, and Connection Specification.md`.

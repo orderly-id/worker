@@ -658,3 +658,11 @@ A safe and extensible Worker ecosystem
 ```
 
 Developers are free to design Worker behavior, domain logic, UI, storage strategy, and integrations. Orderly remains responsible for deciding how that Worker is authenticated, authorized, isolated, executed, connected, observed, distributed, and stopped.
+
+## 19. Universal AI, knowledge, and connection architecture
+
+The host contract MUST remain domain-neutral across Notes, invoice, menu, parking, coworking, IoT, and future Workers. Core provides a generic package dispatcher, validated action envelope, capability host, knowledge retrieval boundary, event delivery, confirmation, and audit. Domain prompts and handlers belong to packages; permanent slug-specific business branches in Core are transitional only.
+
+Publisher prompt resources are immutable and versioned after publication. Instance owners may edit a lower-priority instruction layer and upload declared knowledge/template/dataset/policy/asset resources, but cannot edit platform policy, escalate permission, or disable mandatory confirmation. Connected Workers exchange typed capability calls and minimal events, never raw storage or implicit full context.
+
+The normative design and delivery sequence are defined in `Orderly Worker AI, Knowledge, and Connection Specification.md`.
