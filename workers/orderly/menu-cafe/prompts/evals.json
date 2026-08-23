@@ -1,0 +1,6 @@
+[
+  { "input": "buat kategori makanan ringan", "expect_action": "create_category" },
+  { "input": "tambahkan kentang goreng harga 15000", "expect_action": "create_menu_item" },
+  { "input": "kopi susu tersedia lagi", "expect_action": "update_menu_item" },
+  { "input": "menu apa yang tersedia?", "expect_action": "list_menu" }
+]

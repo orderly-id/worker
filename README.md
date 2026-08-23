@@ -12,6 +12,8 @@ Setiap Worker Instance memiliki UUID internal dan public **Instance Name** denga
 
 Contoh: Worker Notes menyediakan default instance name `notes`. Jika `@rizalsambayu` menggunakan Notes, Orderly membuat `@notes.rizalsambayu` dengan halaman utama `/@notes.rizalsambayu`.
 
+Halaman root `/@{instance-name}.{owner-username}` adalah **Dashboard** instance. Semua path turunannya, `/@{instance-name}.{owner-username}/*`, merupakan area **Workspace** untuk antarmuka operasional Worker.
+
 Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. User tetap dapat menjadi Editor atau Guest pada instance milik user lain; membership tersebut tidak membuat instance baru dan tidak mengubah owner. Public Instance Name tidak menggantikan UUID internal untuk authorization, storage scope, relasi, atau event.
 
 ## Mulai cepat
@@ -25,6 +27,7 @@ npm test
 Contoh yang tersedia:
 
 - `notes`: storage, chat, dan action workspace;
+- `menu-cafe`: kategori, item menu, harga, ketersediaan, chat AI, dan workspace pengelolaan;
 - `tasks`: state/status dan action domain;
 - `webhook-relay`: konfigurasi secret dan network allowlist.
 

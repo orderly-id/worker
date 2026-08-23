@@ -1,0 +1,47 @@
+{
+  "schema_version": "1",
+  "id": "wrk_01k2menucafe00000000000001",
+  "name": "Menu Cafe",
+  "slug": "menu-cafe",
+  "version": "0.1.0",
+  "description": "Kelola kategori, menu, harga, deskripsi, dan ketersediaan cafe melalui chat dan workspace.",
+  "publisher": { "name": "Orderly" },
+  "assets": { "avatar": "assets/avatar.png" },
+  "entry": "src/index.js",
+  "instance": { "default_name": "menu-cafe" },
+  "frontend": { "type": "schema", "entry": "workspace/schema.json" },
+  "permissions": ["chat:read-current", "chat:write-current", "storage:read", "storage:write"],
+  "events": ["chat.message"],
+  "ai": {
+    "provider": "platform",
+    "prompt_version": "1.0.0",
+    "system_prompt_file": "prompts/system.md",
+    "action_schema_file": "prompts/action.schema.json",
+    "examples_file": "prompts/examples.json"
+  },
+  "data": {
+    "models": [
+      {
+        "name": "menu_categories",
+        "fields": {
+          "id": { "type": "uuid", "primary": true },
+          "name": { "type": "string", "required": true },
+          "position": { "type": "integer" }
+        }
+      },
+      {
+        "name": "menu_items",
+        "fields": {
+          "id": { "type": "uuid", "primary": true },
+          "category_id": { "type": "uuid", "required": true },
+          "name": { "type": "string", "required": true },
+          "description": { "type": "text" },
+          "image_url": { "type": "string" },
+          "price": { "type": "integer", "required": true },
+          "available": { "type": "boolean", "required": true },
+          "position": { "type": "integer" }
+        }
+      }
+    ]
+  }
+}

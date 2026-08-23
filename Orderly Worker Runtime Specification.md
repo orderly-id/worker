@@ -138,6 +138,8 @@ Example:
 
 The public handle format is `@{instance-name}.{owner-username}` and the corresponding public page is `/@{instance-name}.{owner-username}`. Resolution MUST normalize both segments, find exactly one instance, and then continue with its internal UUID. A handle alone never proves authorization.
 
+After resolution, the path boundary has platform-level meaning: the exact root `/{public-instance-name}` resolves to the instance **Dashboard**, and `/{public-instance-name}/*` resolves within the instance **Workspace** namespace. Runtime route dispatch MUST preserve this distinction so a Worker cannot accidentally mount a Workspace screen as the Dashboard root.
+
 The runtime and creation service MUST assume that an owner can own at most one instance of a Worker Definition. Database uniqueness for `(owner_user_id, worker_definition_id)` is the final concurrency guard; runtime pre-checks are only user-facing validation.
 
 The platform resolves:

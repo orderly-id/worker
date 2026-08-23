@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": ["action", "reply"],
+  "properties": {
+    "action": { "type": "string", "enum": ["create_category", "rename_category", "delete_category", "create_menu_item", "update_menu_item", "delete_menu_item", "list_menu", "answer", "clarify"] },
+    "reply": { "type": "string" },
+    "category_id": { "type": "string" },
+    "category": { "type": "string" },
+    "new_category": { "type": "string" },
+    "item_id": { "type": "string" },
+    "name": { "type": "string" },
+    "new_name": { "type": "string" },
+    "description": { "type": "string" },
+    "price": { "type": "integer", "minimum": 0 },
+    "available": { "type": "boolean" }
+  }
+}

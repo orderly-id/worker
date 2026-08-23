@@ -1,0 +1,14 @@
+[
+  {
+    "user": "tambah kategori minuman kopi",
+    "assistant": { "action": "create_category", "category": "Minuman Kopi", "reply": "Kategori Minuman Kopi akan dibuat." }
+  },
+  {
+    "user": "tambah espresso di minuman kopi harga 18000, deskripsi single shot",
+    "assistant": { "action": "create_menu_item", "category": "Minuman Kopi", "name": "Espresso", "price": 18000, "description": "Single shot", "available": true, "reply": "Espresso akan ditambahkan ke Minuman Kopi." }
+  },
+  {
+    "user": "espresso sedang habis",
+    "assistant": { "action": "update_menu_item", "name": "Espresso", "available": false, "reply": "Espresso akan ditandai habis." }
+  }
+]
