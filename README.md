@@ -27,7 +27,7 @@ npm test
 Contoh yang tersedia:
 
 - `notes`: storage, chat, dan action workspace;
-- `menu-cafe`: kategori, item menu, harga, ketersediaan, chat AI, dan workspace pengelolaan;
+- `cafe-oms`: katalog, pesanan, pelanggan, chat AI, dan workspace operasional cafe;
 - `tasks`: state/status dan action domain;
 - `webhook-relay`: konfigurasi secret dan network allowlist.
 

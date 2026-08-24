@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "title": "Menu Cafe",
+  "title": "Cafe Order Management System",
   "root": { "model": "menu_categories", "layout": "list", "create_label": "Tambah kategori" },
   "children": { "model": "menu_items", "foreign_key": "category_id", "layout": "menu-list", "create_label": "Tambah menu" },
   "settings": [
