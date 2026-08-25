@@ -1,0 +1,30 @@
+{
+  "version": "1",
+  "title": "FnB Order Management System",
+  "root": { "model": "menu_categories", "layout": "list", "create_label": "Tambah kategori" },
+  "children": { "model": "menu_items", "foreign_key": "category_id", "layout": "menu-list", "create_label": "Tambah menu" },
+  "settings": [
+    { "name": "menu_enabled", "label": "Menu Button", "control": "toggle", "default": false, "description": "Tampilkan katalog dan status ketersediaan produk saat user lain membuka chat dengan pemilik instance." },
+    { "name": "response_enabled", "label": "Respond Button", "control": "toggle", "default": false, "description": "Tampilkan Action dan Respons pada composer chat pengelola." },
+    {
+      "name": "response_actions",
+      "label": "Action Button",
+      "control": "action-list",
+      "default": [
+        { "id": "cancel-order", "name": "Cancel Pesanan", "action": "change_status", "target_status": "cancelled", "status_text": "Pesanan dibatalkan", "availability": "always", "enabled": true },
+        { "id": "complete-order", "name": "Pesanan Selesai", "action": "change_status", "target_status": "completed", "status_text": "Pesanan selesai", "availability": "always", "enabled": true },
+        { "id": "accept-order", "name": "Pesanan Diproses", "action": "change_status", "target_status": "processing", "status_text": "Pesanan diproses", "availability": "always", "enabled": true },
+        { "id": "ready-order", "name": "Pesanan Siap", "action": "change_status", "target_status": "ready", "status_text": "Pesanan siap", "availability": "always", "enabled": true },
+        { "id": "deliver-order", "name": "Antar Pesanan", "action": "change_status", "target_status": "delivering", "status_text": "Pesanan diantar", "availability": "always", "enabled": true }
+      ],
+      "description": "Daftar action fleksibel. Operator menentukan flow lewat urutan tombol yang dipilih; status terakhir pasif dan status terminal menutup seluruh action."
+    }
+  ],
+  "fields": [
+    { "name": "name", "label": "Nama menu", "control": "text", "required": true },
+    { "name": "description", "label": "Deskripsi", "control": "textarea" },
+    { "name": "image_url", "label": "Foto", "control": "image" },
+    { "name": "price", "label": "Harga", "control": "currency", "currency": "IDR", "required": true },
+    { "name": "available", "label": "Tersedia", "control": "toggle", "default": true }
+  ]
+}

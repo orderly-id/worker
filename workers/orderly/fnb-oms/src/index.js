@@ -85,7 +85,7 @@ export default defineWorker({
         if (!clean(action.reply)) throw new WorkerError('INVALID_REPLY', 'Balasan wajib tersedia')
         return envelope(action.action, clean(action.reply))
       default:
-        throw new WorkerError('UNSUPPORTED_ACTION', `Action ${action.action || ''} tidak didukung Cafe Order Management System`)
+        throw new WorkerError('UNSUPPORTED_ACTION', `Action ${action.action || ''} tidak didukung FnB Order Management System`)
     }
   },
 })
