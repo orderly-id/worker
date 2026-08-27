@@ -39,7 +39,7 @@ Implementasi saat ini hanya mempertahankan perilaku yang sudah tersedia, terutam
 
 ## 3. Chat dan Workspace
 
-Chat menyimpan percakapan interaktif. Workspace Assistant menampilkan **activity history**, bukan salinan percakapan penuh.
+Chat menyimpan percakapan interaktif. Dashboard `/@assistant.<username>` hanya menampilkan identitas dan ringkasan instance. Tombol Worker membuka menu `/workspace`; activity history tersedia pada `/workspace/notification`, sedangkan Access, Connect, Worker Information, Permissions, dan pengaturan berada pada `/setting`. Workspace Assistant menampilkan **activity history**, bukan salinan percakapan penuh, dan memakai shell UI yang sama dengan Worker Instance lain.
 
 Contoh activity:
 

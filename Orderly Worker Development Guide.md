@@ -273,7 +273,7 @@ Every instance has an immutable internal UUID and a public Instance Name:
 
 The Worker manifest SHOULD provide a default instance-name segment. Notes defaults to `notes`; therefore Notes owned by `@rizalsambayu` is `@notes.rizalsambayu` and opens at `/@notes.rizalsambayu`.
 
-Keep the instance route hierarchy consistent: `/@{instance-name}.{owner-username}` is the instance **Dashboard**, while every descendant route `/@{instance-name}.{owner-username}/*` is part of its **Workspace**. Put instance-wide summaries and entry-point navigation on the Dashboard. Put operational Worker interfaces and nested content—such as Notes folders, FnB Order Management System catalog, active orders, and order history—inside Workspace routes.
+Keep the instance route hierarchy consistent: `/@{instance-name}.{owner-username}` is the instance **Dashboard**, while every descendant route `/@{instance-name}.{owner-username}/*` is part of its **Workspace**. Keep the Dashboard limited to instance identity, summary metrics, and the Worker entry point. Use `/workspace` as the standard feature menu and `/setting` as the shared General Setting, User Access, Instance Connect, Worker Information, and Permissions page. Put operational interfaces and nested content—such as Notes `/workspace/folder`, Assistant `/workspace/notification`, FnB catalog, active orders, and order history—behind the Workspace menu. Reuse the platform navbar, section-card headers, surface colors, spacing, empty states, and back-navigation behavior; customize only the domain content that genuinely differs.
 
 The platform MUST enforce:
 

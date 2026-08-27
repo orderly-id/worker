@@ -5,19 +5,21 @@
   "children": { "model": "menu_items", "foreign_key": "category_id", "layout": "menu-list", "create_label": "Tambah menu" },
   "settings": [
     { "name": "menu_enabled", "label": "Menu Button", "control": "toggle", "default": false, "description": "Tampilkan katalog dan status ketersediaan produk saat user lain membuka chat dengan pemilik instance." },
+    { "name": "profile_menu_enabled", "label": "Display Menu", "control": "toggle", "default": false, "description": "Tampilkan katalog FnB OMS pada profil publik pemilik instance." },
     { "name": "response_enabled", "label": "Respond Button", "control": "toggle", "default": false, "description": "Tampilkan Action dan Respons pada composer chat pengelola." },
     {
       "name": "response_actions",
       "label": "Action Button",
       "control": "action-list",
       "default": [
-        { "id": "cancel-order", "name": "Cancel Pesanan", "action": "change_status", "target_status": "cancelled", "status_text": "Pesanan dibatalkan", "availability": "always", "enabled": true },
-        { "id": "complete-order", "name": "Pesanan Selesai", "action": "change_status", "target_status": "completed", "status_text": "Pesanan selesai", "availability": "always", "enabled": true },
-        { "id": "accept-order", "name": "Pesanan Diproses", "action": "change_status", "target_status": "processing", "status_text": "Pesanan diproses", "availability": "always", "enabled": true },
-        { "id": "ready-order", "name": "Pesanan Siap", "action": "change_status", "target_status": "ready", "status_text": "Pesanan siap", "availability": "always", "enabled": true },
-        { "id": "deliver-order", "name": "Antar Pesanan", "action": "change_status", "target_status": "delivering", "status_text": "Pesanan diantar", "availability": "always", "enabled": true }
+        { "id": "cancel-order", "name": "Cancel Pesanan", "action": "change_status", "button_type": "cancel.button", "target_status": "cancel", "status_text": "Pesanan dibatalkan", "availability": "always", "enabled": true },
+        { "id": "complete-order", "name": "Pesanan Selesai", "action": "change_status", "button_type": "end.button", "target_status": "end", "status_text": "Pesanan selesai", "availability": "always", "enabled": true },
+        { "id": "accept-order", "name": "Terima Pesanan", "action": "change_status", "button_type": "accept.button", "target_status": "process", "status_text": "Pesanan diproses", "availability": "always", "enabled": true },
+        { "id": "ready-order", "name": "Pesanan Siap", "action": "change_status", "button_type": "flow.button", "target_status": "process", "status_text": "Pesanan sudah siap", "availability": "always", "enabled": true },
+        { "id": "deliver-order", "name": "Antar Pesanan", "action": "change_status", "button_type": "flow.button", "target_status": "process", "status_text": "Pesanan sedang di antar", "availability": "always", "enabled": true },
+        { "id": "arrived-order", "name": "Pesanan Sampai", "action": "change_status", "button_type": "flow.button", "target_status": "process", "status_text": "Pesanan sudah sampai", "availability": "always", "enabled": true }
       ],
-      "description": "Daftar action fleksibel. Operator menentukan flow lewat urutan tombol yang dipilih; status terakhir pasif dan status terminal menutup seluruh action."
+      "description": "Action memakai empat jenis tombol: accept.button, cancel.button, flow.button, dan end.button. Flow button hanya mengubah pesan operasional tanpa mereset timer process."
     }
   ],
   "fields": [

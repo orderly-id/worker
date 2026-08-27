@@ -12,7 +12,9 @@ Setiap Worker Instance memiliki UUID internal dan public **Instance Name** denga
 
 Contoh: Worker Notes menyediakan default instance name `notes`. Jika `@rizalsambayu` menggunakan Notes, Orderly membuat `@notes.rizalsambayu` dengan halaman utama `/@notes.rizalsambayu`.
 
-Halaman root `/@{instance-name}.{owner-username}` adalah **Dashboard** instance. Semua path turunannya, `/@{instance-name}.{owner-username}/*`, merupakan area **Workspace** untuk antarmuka operasional Worker.
+Halaman root `/@{instance-name}.{owner-username}` adalah **Dashboard** instance. Semua path turunannya, `/@{instance-name}.{owner-username}/*`, merupakan area **Workspace** untuk antarmuka operasional Worker. Seluruh Worker memakai shell UI yang konsisten: Dashboard hanya menampilkan identitas dan ringkasan instance; tombol Worker membuka menu `/workspace`; fitur operasional memiliki route turunannya sendiri; sedangkan `/setting` memusatkan General Setting, User Access, Instance Connect, Worker Information, dan Permissions. Worker boleh menentukan isi fitur dan datanya, tetapi tidak mengganti hierarki shell tersebut.
+
+Contoh route bawaan: Notes memakai `/workspace/folder`, Orderly Assistant memakai `/workspace/notification`, dan FnB Order Management System memakai `/order`, `/catalog`, serta `/respond`. Card, navbar, header section, spacing, status, dan pola navigasi mengikuti komponen platform agar Worker baru tetap mudah dipahami tanpa membatasi UI domain di dalam area kontennya.
 
 Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. User tetap dapat menjadi Editor atau Guest pada instance milik user lain; membership tersebut tidak membuat instance baru dan tidak mengubah owner. Public Instance Name tidak menggantikan UUID internal untuk authorization, storage scope, relasi, atau event.
 

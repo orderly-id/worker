@@ -349,7 +349,7 @@ The canonical public page MUST use the same handle:
 /@notes.rizalsambayu
 ```
 
-The canonical page without a descendant path, `/@{instance-name}.{owner-username}`, MUST be treated as the instance **Dashboard**. It presents instance-level identity, summaries, access, connections, settings, and navigation. Every descendant page under `/@{instance-name}.{owner-username}/*` belongs to the instance **Workspace** area. Worker-specific screens such as `/workspace`, `/catalog`, `/order`, and their nested pages MUST therefore be implemented as Workspace routes, not as alternate Dashboard roots.
+The canonical page without a descendant path, `/@{instance-name}.{owner-username}`, MUST be treated as the instance **Dashboard**. It presents instance identity, summary metrics, and the entry point to the Worker. Every descendant page under `/@{instance-name}.{owner-username}/*` belongs to the instance **Workspace** area. The platform-standard `/workspace` route MUST present the instance Workspace menu, while `/setting` MUST consolidate General Setting, User Access, Instance Connect, Worker Information, and Permissions. Worker-specific screens such as Notes `/workspace/folder`, Assistant `/workspace/notification`, FnB `/catalog`, `/order`, and their nested pages MUST therefore be implemented as Workspace routes, not as alternate Dashboard roots. Workers MUST reuse the platform shell for navbar, section cards, spacing, status, and navigation while remaining free to define domain-specific content inside those screens.
 
 Public Instance Names are lookup and routing identifiers. Internal authorization, storage scope, relations, and events MUST use the unique internal instance ID after resolution.
 
