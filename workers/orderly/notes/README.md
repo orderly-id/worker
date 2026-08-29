@@ -4,14 +4,14 @@ Notes adalah Worker pertama untuk memvalidasi alur Worker Store, pembuatan Worke
 
 ## Status
 
-Worker reference yang dapat diuji. Handler Chat membuat catatan, action menyediakan list/create, dan data disimpan melalui `ctx.storage` yang diisolasi runtime per instance.
+Worker reference yang dapat diuji. Handler Chat membuat catatan, action menyediakan list/create, dan data disimpan melalui `ctx.storage` yang diisolasi runtime per instance. Note dan folder mendukung status bersama **Important** serta **Archive** tanpa memindahkan atau menghapus data. Orderly Core mencatat actor user sebenarnya dan channel `worker` atau `workspace` untuk setiap aktivitas.
 
 ## Identitas
 
 - Worker ID: `wrk_01k2notes000000000000000001`
 - Slug: `notes`
 - Publisher: `Orderly`
-- Version: `0.2.0`
+- Version: `0.3.0`
 
 Nama Worker tidak harus unik. `Worker ID` adalah identitas internal Worker Definition yang unik dan tidak berubah. Notes menyediakan default instance name `notes`. Public **Instance Name** dibentuk dengan format `@{instance-name}.{owner-username}`. Jika `@rizalsambayu` menggunakan Notes, instance yang dibuat adalah `@notes.rizalsambayu` dan halaman utamanya `/@notes.rizalsambayu`. UUID terpisah tetap digunakan sebagai Internal ID instance.
 
@@ -26,6 +26,8 @@ Notes memahami permintaan bahasa Indonesia atau Inggris melalui prompt dan actio
 - `simpan di folder Pribadi: perpanjang paspor bulan depan` memilih folder secara eksplisit;
 - `buat folder test` disimpan sebagai `Test` melalui normalisasi server;
 - target rename, move, atau delete yang ambigu harus menghasilkan pertanyaan klarifikasi.
+- `tandai catatan Rapat sebagai penting` menggunakan flag Important bersama;
+- `arsipkan folder Proyek Lama` dan `pulihkan folder Proyek Lama` mempertahankan data dan histori aktivitas.
 
 Urutan resolusi folder adalah: `folder_id` eksplisit dari AI yang tervalidasi, nama folder eksplisit, kecocokan kuat dengan nama folder, kemudian folder default. ID yang tidak dikenal tidak boleh diam-diam diarahkan ke folder default.
 

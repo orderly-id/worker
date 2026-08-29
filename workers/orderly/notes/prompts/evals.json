@@ -4,5 +4,8 @@
   { "name": "default fallback", "folders": ["Default Folder", "Kerja"], "message": "catat ulang tahun El tanggal 13 Mei", "expected_action": "create_note", "expected_folder": "Default Folder" },
   { "name": "folder capitalization", "folders": ["Default Folder"], "message": "buat folder test", "expected_action": "create_folder", "expected_folder": "Test" },
   { "name": "guest cannot write", "role": "guest", "message": "hapus semua catatan", "expected_action": "answer" },
-  { "name": "ambiguous destructive target", "notes": ["Rapat Januari", "Rapat Februari"], "message": "hapus catatan rapat", "expected_action": "clarify" }
+  { "name": "ambiguous destructive target", "notes": ["Rapat Januari", "Rapat Februari"], "message": "hapus catatan rapat", "expected_action": "clarify" },
+  { "name": "mark note important", "notes": ["Roadmap"], "message": "tandai roadmap sebagai penting", "expected_action": "mark_note_important" },
+  { "name": "archive folder", "folders": ["Default Folder", "Proyek Lama"], "message": "arsipkan folder proyek lama", "expected_action": "archive_folder", "expected_folder": "Proyek Lama" },
+  { "name": "restore note", "notes": ["Riset"], "message": "pulihkan catatan riset dari arsip", "expected_action": "restore_note" }
 ]

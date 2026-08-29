@@ -3,7 +3,7 @@
   "id": "wrk_01k2notes000000000000000001",
   "name": "Notes",
   "slug": "notes",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simpan dan kelola catatan dalam satu Worker Instance.",
   "publisher": {
     "name": "Orderly"
@@ -38,6 +38,8 @@
           "id": { "type": "uuid", "primary": true },
           "name": { "type": "string", "required": true },
           "position": { "type": "integer" },
+          "important": { "type": "boolean" },
+          "archived_at": { "type": "datetime" },
           "created_at": { "type": "datetime" }
         }
       },
@@ -55,6 +57,8 @@
           "title": { "type": "string", "required": true },
           "folder_id": { "type": "uuid", "required": true },
           "folder": { "type": "string", "required": true },
+          "important": { "type": "boolean" },
+          "archived_at": { "type": "datetime" },
           "created_at": {
             "type": "datetime"
           }

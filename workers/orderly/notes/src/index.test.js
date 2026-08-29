@@ -64,3 +64,59 @@ test('rejects a hallucinated explicit folder id instead of falling back', async 
     error => error.code === 'FOLDER_NOT_FOUND',
   )
 })
+
+test('plans Important and Archive updates without moving the item', async () => {
+  const state = {
+    default_folder_id: 'default-id',
+    folders: [
+      { id: 'default-id', name: 'Default Folder' },
+      { id: 'project-id', name: 'Project' },
+    ],
+    notes: [
+      { id: 'roadmap-id', folder_id: 'project-id', title: 'Roadmap', content: 'Draft' },
+    ],
+  }
+
+  const important = await dispatchWorkerAction(worker, {
+    action: 'mark_note_important',
+    note_id: 'roadmap-id',
+  }, { state })
+  assert.deepEqual(important.operations[0], {
+    id: 'note',
+    capability: 'storage.update',
+    resource: 'notes',
+    input: { important: true },
+    target_id: 'roadmap-id',
+  })
+
+  const archived = await dispatchWorkerAction(worker, {
+    action: 'archive_folder',
+    folder_id: 'project-id',
+  }, { state })
+  assert.deepEqual(archived.operations[0], {
+    id: 'folder',
+    capability: 'storage.update',
+    resource: 'folders',
+    input: { archived: true },
+    target_id: 'project-id',
+  })
+})
+
+test('does not infer an archived folder for a new note', async () => {
+  const envelope = await dispatchWorkerAction(worker, {
+    action: 'create_note',
+    title: 'Project plan',
+    content: 'Project plan for Monday',
+  }, {
+    state: {
+      default_folder_id: 'default-id',
+      folders: [
+        { id: 'default-id', name: 'Default Folder' },
+        { id: 'project-id', name: 'Project', archived_at: '2026-08-29T00:00:00Z' },
+      ],
+      notes: [],
+    },
+  })
+
+  assert.equal(envelope.operations[0].input.folder_id, 'default-id')
+})

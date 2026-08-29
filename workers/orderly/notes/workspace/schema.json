@@ -1,1 +1,1 @@
-{"version":1,"title":"Notes","view":{"type":"collection","model":"notes","primary":"title","secondary":"folder"},"actions":["create","list"]}
+{"version":2,"title":"Notes","view":{"type":"collection","model":"notes","primary":"title","secondary":"folder"},"actions":["create","list","mark_important","unmark_important","archive","restore"]}

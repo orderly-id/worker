@@ -51,6 +51,10 @@ function stateFolders(context) {
   return Array.isArray(context?.state?.folders) ? context.state.folders : []
 }
 
+function activeFolders(context) {
+  return stateFolders(context).filter(folder => !folder.archived_at)
+}
+
 function stateNotes(context) {
   return Array.isArray(context?.state?.notes) ? context.state.notes : []
 }
@@ -92,13 +96,14 @@ function envelope(action, reply, operations = [], output = {}) {
 export default defineWorker({
   async onAction(action, context) {
     const folders = stateFolders(context)
+    const availableFolders = activeFolders(context)
     const notes = stateNotes(context)
 
     switch (action.action) {
       case 'create_note': {
         const content = String(action.content || '').trim()
         if (!content) throw new WorkerError('INVALID_NOTE', 'Isi catatan wajib diisi')
-        const folder = inferredFolder(folders, action, context?.state?.default_folder_id)
+        const folder = inferredFolder(availableFolders, action, context?.state?.default_folder_id)
         if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tujuan tidak ditemukan')
         const title = humanName(action.title || content.slice(0, 80))
         return envelope('create_note', action.reply || `Catatan disimpan di folder “${folder.name}”.`, [
@@ -146,6 +151,46 @@ export default defineWorker({
         if (!folder || !name) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder yang akan diubah tidak ditemukan')
         return envelope('rename_folder', action.reply || `Folder diubah menjadi “${name}”.`, [
           operation('folder', 'storage.update', 'folders', { name }, folder.id),
+        ], { folder_id: folder.id })
+      }
+
+      case 'mark_note_important':
+      case 'unmark_note_important': {
+        const note = selectedNote(notes, action)
+        if (!note) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan tidak ditemukan')
+        const important = action.action === 'mark_note_important'
+        return envelope(action.action, action.reply || `Catatan “${note.title}” ${important ? 'ditandai Important' : 'dihapus dari Important'}.`, [
+          operation('note', 'storage.update', 'notes', { important }, note.id),
+        ], { note_id: note.id })
+      }
+
+      case 'archive_note':
+      case 'restore_note': {
+        const note = selectedNote(notes, action)
+        if (!note) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan tidak ditemukan')
+        const archived = action.action === 'archive_note'
+        return envelope(action.action, action.reply || `Catatan “${note.title}” ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
+          operation('note', 'storage.update', 'notes', { archived }, note.id),
+        ], { note_id: note.id })
+      }
+
+      case 'mark_folder_important':
+      case 'unmark_folder_important': {
+        const folder = requestedFolder(folders, action)
+        if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tidak ditemukan')
+        const important = action.action === 'mark_folder_important'
+        return envelope(action.action, action.reply || `Folder “${folder.name}” ${important ? 'ditandai Important' : 'dihapus dari Important'}.`, [
+          operation('folder', 'storage.update', 'folders', { important }, folder.id),
+        ], { folder_id: folder.id })
+      }
+
+      case 'archive_folder':
+      case 'restore_folder': {
+        const folder = requestedFolder(folders, action)
+        if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tidak ditemukan')
+        const archived = action.action === 'archive_folder'
+        return envelope(action.action, action.reply || `Folder “${folder.name}” ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
+          operation('folder', 'storage.update', 'folders', { archived }, folder.id),
         ], { folder_id: folder.id })
       }
 

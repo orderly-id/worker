@@ -18,5 +18,15 @@
     "context": { "folders": [{ "id": "folder-a", "name": "Kerja" }, { "id": "folder-b", "name": "Proyek Kerja" }] },
     "user": "simpan catatan ini ke folder proyek",
     "assistant": { "action": "clarify", "folder_resolution": "not_applicable", "confidence": 0.45, "reply": "Apakah catatan ini ingin disimpan di folder Kerja atau Proyek Kerja?" }
+  },
+  {
+    "context": { "notes": [{ "id": "note-roadmap", "title": "Roadmap" }] },
+    "user": "tandai roadmap sebagai penting",
+    "assistant": { "action": "mark_note_important", "note_id": "note-roadmap", "folder_resolution": "not_applicable", "confidence": 1, "reply": "Catatan Roadmap akan ditandai Important." }
+  },
+  {
+    "context": { "folders": [{ "id": "folder-old", "name": "Proyek Lama" }] },
+    "user": "arsipkan folder proyek lama",
+    "assistant": { "action": "archive_folder", "folder_id": "folder-old", "folder_resolution": "not_applicable", "confidence": 1, "reply": "Folder Proyek Lama akan diarsipkan." }
   }
 ]
