@@ -69,7 +69,7 @@ A minimal Worker manifest may look like:
   "slug": "notes",
   "version": "1.0.0",
 
-  "description": "Create and manage notes through chat and Workspace.",
+  "description": "Create and manage notes through Assistant Chat and Workspace.",
 
   "publisher": {
     "name": "Example Developer"
@@ -333,7 +333,7 @@ Example:
 
 ```json
 {
-  "description": "Create and manage notes through chat and Workspace."
+  "description": "Create and manage notes through Assistant Chat and Workspace."
 }
 ```
 
@@ -541,9 +541,9 @@ A sandbox frontend MUST NOT receive unrestricted access to the Orderly applicati
 
 ---
 
-## 13.3 No Frontend
+## 13.3 No Workspace Frontend
 
-Chat-only Workers MAY declare:
+Workers that expose only Assistant-facing actions and no custom Workspace MAY declare:
 
 ```json
 {
@@ -554,6 +554,8 @@ Chat-only Workers MAY declare:
 ```
 
 or omit `frontend`.
+
+This does not create a per-instance chat UI. Orderly Assistant remains the sole conversational surface and dispatches to the Worker's declared actions.
 
 ---
 
@@ -654,6 +656,8 @@ workspace.opened
 The actual event catalogue is defined by the Worker Event Specification.
 
 A Worker MUST NOT receive events it has no permission to receive.
+
+For a non-Assistant Worker, `chat.message` means a message routed from the authenticated user's Assistant conversation to this resolved target instance. Declaring the event MUST NOT create a standalone chat route, thread, or UI for the instance.
 
 ---
 
@@ -1008,7 +1012,15 @@ Orderly MAY use this metadata to automatically generate the Create Instance inte
 @{instance.default_name-or-selected-name}.{owner-username}
 ```
 
-For Notes, `default_name: "notes"` and owner `@rizalsambayu` produce `@notes.rizalsambayu` and `/@notes.rizalsambayu`.
+Core separately composes the symbol-free page:
+
+```text
+/instance/{instance.default_name-or-selected-name}.{owner-username}
+```
+
+For Notes, `default_name: "notes"` and owner `@rizalsambayu` produce `@notes.rizalsambayu` and `/instance/notes.rizalsambayu`.
+
+Assistant Chat may display and parse `#notes.rizalsambayu` as the conversational reference for the same instance. This reference is derived by Core, is not a route, and MUST NOT be persisted as the authoritative identity.
 
 Requirements:
 

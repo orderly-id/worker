@@ -195,13 +195,13 @@ when the Worker only needs the active message.
 
 # 7. Chat Permissions
 
-Chat permissions control access to Orderly conversations and messages.
+Chat permissions control access to the current Orderly Assistant conversation and messages. For non-Assistant Workers these permissions never provision a separate instance chat interface.
 
 ---
 
 ## 7.1 `chat:read-current`
 
-Allows the Worker to read the current message/event sent to the Worker Instance.
+Allows the selected Worker to read the current message/event routed by Assistant to the Worker Instance.
 
 Example:
 
@@ -226,7 +226,7 @@ It MUST NOT automatically expose previous conversation history.
 
 ## 7.2 `chat:write-current`
 
-Allows the Worker to reply inside the current conversation.
+Allows the Worker to return a reply inside the current Assistant conversation.
 
 Example:
 
@@ -234,7 +234,7 @@ Example:
 await ctx.chat.reply("Saved.");
 ```
 
-This permission SHOULD be sufficient for most conversational Workers.
+This permission SHOULD be sufficient for most Assistant-mediated conversational Workers.
 
 ---
 
@@ -254,6 +254,8 @@ This permission SHOULD be considered more sensitive than `chat:read-current`.
 
 Workers SHOULD NOT request it unless conversation history is genuinely necessary.
 
+History access remains bounded to the Assistant conversation and authorized target context. It MUST NOT expose unrelated Assistant requests made to other Workers.
+
 ---
 
 ## 7.4 `chat:send`
@@ -270,6 +272,8 @@ await ctx.chat.send({
 ```
 
 This permission SHOULD require stronger user consent because it allows proactive messaging.
+
+For a non-Assistant Worker, proactive output is delivered through the user's Assistant or another explicitly approved Orderly destination. It does not create a Worker-owned chat thread.
 
 ---
 

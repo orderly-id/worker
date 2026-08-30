@@ -217,9 +217,9 @@ workers/<publisher>/<worker-slug>/
     └── banner.png
 ```
 
-Not every directory is required. A chat-only Worker may omit `workspace/`. A UI-only Worker may have minimal backend handlers. The template generator should ask which capabilities are needed and create only the relevant files.
+Not every directory is required. An Assistant-action-only Worker may omit `workspace/`. A Workspace-only Worker may have minimal conversational handlers. The template generator should ask which capabilities are needed and create only the relevant files.
 
-Business logic should live in `domain/` or `services/`, not directly inside chat and route handlers. This lets chat, Workspace, API, AI, and Worker-to-Worker actions share the same tested behavior.
+Business logic should live in `domain/` or `services/`, not directly inside Assistant conversation and route handlers. This lets Assistant Chat, Workspace, API, AI, and Worker-to-Worker actions share the same tested behavior.
 
 ---
 
@@ -271,9 +271,9 @@ Every instance has an immutable internal UUID and a public Instance Name:
 @{instance-name}.{owner-username}
 ```
 
-The Worker manifest SHOULD provide a default instance-name segment. Notes defaults to `notes`; therefore Notes owned by `@rizalsambayu` is `@notes.rizalsambayu` and opens at `/@notes.rizalsambayu`.
+The Worker manifest SHOULD provide a default instance-name segment. Notes defaults to `notes`; therefore Notes owned by `@rizalsambayu` is `@notes.rizalsambayu` and opens at `/instance/notes.rizalsambayu`.
 
-Keep the instance route hierarchy consistent: `/@{instance-name}.{owner-username}` is the instance **Dashboard**, while every descendant route `/@{instance-name}.{owner-username}/*` is part of its **Workspace**. Keep the Dashboard limited to instance identity, summary metrics, and the Worker entry point. Use `/workspace` as the standard feature menu and `/setting` as the shared General Setting, User Access, Instance Connect, Worker Information, and Permissions page. Put operational interfaces and nested content—such as Notes `/workspace/folder`, Assistant `/workspace/notification`, FnB catalog, active orders, and order history—behind the Workspace menu. Reuse the platform navbar, section-card headers, surface colors, spacing, empty states, and back-navigation behavior; customize only the domain content that genuinely differs.
+Keep the instance route hierarchy consistent: `/instance/{instance-name}.{owner-username}` is the instance **Dashboard**, while every descendant route `/instance/{instance-name}.{owner-username}/*` is part of its **Workspace**. Assistant uses `/assistant/{owner-username}` and profiles use `/user/{username}`. Keep the Dashboard limited to instance identity, summary metrics, and the Worker entry point. Use `/workspace` as the standard feature menu and `/setting` as the shared General Setting, User Access, Instance Connect, Worker Information, and Permissions page. Put operational interfaces and nested content—such as Notes `/workspace/folder`, Assistant `/workspace/notification`, FnB catalog, active orders, and order history—behind the Workspace menu. Reuse the platform navbar, section-card headers, surface colors, spacing, empty states, and back-navigation behavior; customize only the domain content that genuinely differs.
 
 The platform MUST enforce:
 
@@ -283,6 +283,8 @@ The platform MUST enforce:
 - membership access separately from ownership.
 
 Accepting an invitation as Editor or Guest adds access to the owner's existing instance. It does not create another owned instance and does not change the handle suffix. Internal APIs, storage, events, permission checks, and relationships MUST use the instance UUID after resolving a public handle.
+
+Inside Assistant Chat, the same instance is referenced as `#instance.username`, for example `#notes.rizalsambayu`. This is a mention/resolution convenience only; it does not replace `/instance/notes.rizalsambayu` or the internal UUID.
 
 The display label and instance-name segment are separate. A label such as `Catatan Kerja` may change without changing the UUID. If the platform permits changing the instance-name segment, it MUST validate the new composed handle and update the canonical route atomically.
 
@@ -336,7 +338,12 @@ Another Worker data   → explicit Worker action contract
 
 A Worker may define its own interface and behavior without adding components or routes directly to the Orderly Vue application.
 
-Orderly should provide two UI modes:
+Orderly should provide two Workspace UI modes. Conversation is a separate platform surface owned exclusively by Orderly Assistant:
+
+- **Assistant conversational action:** the package declares prompts/actions and returns structured output to the current `@assistant.username` conversation;
+- **Instance Workspace:** the package provides one of the rich visual modes below under the canonical instance route.
+
+Contributors MUST NOT build an independent chat page for a non-Assistant Worker. Compatibility APIs such as `ctx.chat.reply` target the current Assistant conversation. The full contract is defined in `Orderly Worker Interaction Model.md`.
 
 ### 9.1 Declarative Workspace
 
@@ -633,10 +640,10 @@ The initial foundation is ready when a contributor can:
 1. create a Worker from a template;
 2. run it locally without installing Orderly Core internals;
 3. validate its manifest and permissions;
-4. test chat behavior and instance-scoped storage;
+4. test Assistant-mediated conversational behavior and instance-scoped storage;
 5. package an immutable release;
 6. install a private test instance in Orderly;
-7. interact through Chat and a supported Workspace surface;
+7. interact through Assistant Chat and a supported Workspace surface;
 8. observe logs and safe errors;
 9. prove that denied permissions and cross-instance access fail;
 10. update documentation from the same contracts used by validation and tests.

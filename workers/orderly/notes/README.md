@@ -1,10 +1,10 @@
 # Notes
 
-Notes adalah Worker pertama untuk memvalidasi alur Worker Store, pembuatan Worker Instance, Chat, dan penyimpanan data yang terisolasi per instance.
+Notes adalah Worker pertama untuk memvalidasi alur Worker Store, pembuatan Worker Instance, action melalui Orderly Assistant, Workspace, dan penyimpanan data yang terisolasi per instance.
 
 ## Status
 
-Worker reference yang dapat diuji. Handler Chat membuat catatan, action menyediakan list/create, dan data disimpan melalui `ctx.storage` yang diisolasi runtime per instance. Note dan folder mendukung status bersama **Important** serta **Archive** tanpa memindahkan atau menghapus data. Orderly Core mencatat actor user sebenarnya dan channel `worker` atau `workspace` untuk setiap aktivitas.
+Worker reference yang dapat diuji. Handler percakapan yang dipanggil dari Assistant membuat catatan, action menyediakan list/create, dan data disimpan melalui `ctx.storage` yang diisolasi runtime per instance. Note dan folder mendukung status bersama **Important** serta **Archive** tanpa memindahkan atau menghapus data. Orderly Core mencatat actor user sebenarnya dan channel `worker` atau `workspace` untuk setiap aktivitas.
 
 ## Identitas
 
@@ -13,13 +13,13 @@ Worker reference yang dapat diuji. Handler Chat membuat catatan, action menyedia
 - Publisher: `Orderly`
 - Version: `0.3.0`
 
-Nama Worker tidak harus unik. `Worker ID` adalah identitas internal Worker Definition yang unik dan tidak berubah. Notes menyediakan default instance name `notes`. Public **Instance Name** dibentuk dengan format `@{instance-name}.{owner-username}`. Jika `@rizalsambayu` menggunakan Notes, instance yang dibuat adalah `@notes.rizalsambayu` dan halaman utamanya `/@notes.rizalsambayu`. UUID terpisah tetap digunakan sebagai Internal ID instance.
+Nama Worker tidak harus unik. `Worker ID` adalah identitas internal Worker Definition yang unik dan tidak berubah. Notes menyediakan default instance name `notes`. Public **Instance Name** dibentuk dengan format `@{instance-name}.{owner-username}`. Jika `@rizalsambayu` menggunakan Notes, instance yang dibuat adalah `@notes.rizalsambayu` dan halaman tanpa simbolnya `/instance/notes.rizalsambayu`. UUID terpisah tetap digunakan sebagai Internal ID instance.
 
 Seorang user hanya dapat memiliki satu instance Notes. Menjadi Editor atau Guest pada Notes milik user lain hanya menambah membership dan tidak membuat instance Notes kedua milik user tersebut. Display label MAY diubah tanpa mengubah Worker Definition atau UUID internal; perubahan instance-name segment harus tetap unik dalam namespace owner.
 
-## Chat
+## Penggunaan melalui Assistant Chat
 
-Notes memahami permintaan bahasa Indonesia atau Inggris melalui prompt dan action contract paket. Contoh:
+Notes tidak memiliki antarmuka chat sendiri. User memakai percakapan `@assistant.username` dan dapat menyebut target `#notes.username`. Notes memahami permintaan bahasa Indonesia atau Inggris melalui prompt dan action contract paket. Contoh:
 
 - `catat ulang tahun El tanggal 13 Mei` menggunakan folder default;
 - `buat catatan kerja tentang rapat Jumat` memilih folder `Kerja` jika tersedia;
@@ -28,6 +28,8 @@ Notes memahami permintaan bahasa Indonesia atau Inggris melalui prompt dan actio
 - target rename, move, atau delete yang ambigu harus menghasilkan pertanyaan klarifikasi.
 - `tandai catatan Rapat sebagai penting` menggunakan flag Important bersama;
 - `arsipkan folder Proyek Lama` dan `pulihkan folder Proyek Lama` mempertahankan data dan histori aktivitas.
+
+Jika user memiliki lebih dari satu instance Notes yang dapat diakses, reference eksplisit atau klarifikasi menentukan target. Assistant tidak boleh menebak target yang ambigu. Setelah target diselesaikan, Core memakai UUID dan role actor yang sebenarnya.
 
 Urutan resolusi folder adalah: `folder_id` eksplisit dari AI yang tervalidasi, nama folder eksplisit, kecocokan kuat dengan nama folder, kemudian folder default. ID yang tidak dikenal tidak boleh diam-diam diarahkan ke folder default.
 

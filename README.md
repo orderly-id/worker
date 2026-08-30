@@ -10,13 +10,19 @@ Setiap Worker Instance memiliki UUID internal dan public **Instance Name** denga
 @{instance-name}.{owner-username}
 ```
 
-Contoh: Worker Notes menyediakan default instance name `notes`. Jika `@rizalsambayu` menggunakan Notes, Orderly membuat `@notes.rizalsambayu` dengan halaman utama `/@notes.rizalsambayu`.
+Contoh: Worker Notes menyediakan default instance name `notes`. Jika `@rizalsambayu` menggunakan Notes, Orderly membuat `@notes.rizalsambayu` dengan halaman utama `/instance/notes.rizalsambayu`.
 
-Halaman root `/@{instance-name}.{owner-username}` adalah **Dashboard** instance. Semua path turunannya, `/@{instance-name}.{owner-username}/*`, merupakan area **Workspace** untuk antarmuka operasional Worker. Seluruh Worker memakai shell UI yang konsisten: Dashboard hanya menampilkan identitas dan ringkasan instance; tombol Worker membuka menu `/workspace`; fitur operasional memiliki route turunannya sendiri; sedangkan `/setting` memusatkan General Setting, User Access, Instance Connect, Worker Information, dan Permissions. Worker boleh menentukan isi fitur dan datanya, tetapi tidak mengganti hierarki shell tersebut.
+Halaman root `/instance/{instance-name}.{owner-username}` adalah **Dashboard** instance. Semua path turunannya, `/instance/{instance-name}.{owner-username}/*`, merupakan area **Workspace** untuk antarmuka operasional Worker. Assistant memakai namespace khusus `/assistant/{owner-username}`. Seluruh Worker memakai shell UI yang konsisten: Dashboard hanya menampilkan identitas dan ringkasan instance; tombol Worker membuka menu `/workspace`; fitur operasional memiliki route turunannya sendiri; sedangkan `/setting` memusatkan General Setting, User Access, Instance Connect, Worker Information, dan Permissions. Worker boleh menentukan isi fitur dan datanya, tetapi tidak mengganti hierarki shell tersebut.
 
 Contoh route bawaan: Notes memakai `/workspace/folder`, Orderly Assistant memakai `/workspace/notification`, dan FnB Order Management System memakai `/order`, `/catalog`, serta `/respond`. Card, navbar, header section, spacing, status, dan pola navigasi mengikuti komponen platform agar Worker baru tetap mudah dipahami tanpa membatasi UI domain di dalam area kontennya.
 
 Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. User tetap dapat menjadi Editor atau Guest pada instance milik user lain; membership tersebut tidak membuat instance baru dan tidak mengubah owner. Public Instance Name tidak menggantikan UUID internal untuk authorization, storage scope, relasi, atau event.
+
+## Model interaksi
+
+`@assistant.{username}` adalah satu-satunya Worker dengan antarmuka chat. Worker non-Assistant digunakan melalui Workspace masing-masing atau melalui percakapan Assistant. Di dalam percakapan, target ditulis sebagai reference `#instance.username`, misalnya `#notes.rizalsambayu`.
+
+Reference `#instance.username` bukan route dan tidak mengganti public Instance Name `@instance.username`. Route tanpa simbol memakai `/instance/instance.username`; profil memakai `/user/username`; Assistant memakai `/assistant/username`. Core menyelesaikan semuanya ke UUID internal, memeriksa actor, membership, role, capability, serta confirmation policy, kemudian menjalankan action dari paket target. Kontrak lengkap berada di [Orderly Worker Interaction Model.md](./Orderly%20Worker%20Interaction%20Model.md).
 
 ## Mulai cepat
 
@@ -28,8 +34,8 @@ npm test
 
 Contoh yang tersedia:
 
-- `notes`: storage, chat, dan action workspace;
-- `fnb-oms`: katalog, pesanan, pelanggan, chat AI, dan workspace operasional bisnis makanan dan minuman;
+- `notes`: storage, action melalui Assistant, dan action workspace;
+- `fnb-oms`: katalog, pesanan, pelanggan, action melalui Assistant, dan workspace operasional bisnis makanan dan minuman;
 - `tasks`: state/status dan action domain;
 - `webhook-relay`: konfigurasi secret dan network allowlist.
 

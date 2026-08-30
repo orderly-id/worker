@@ -4,7 +4,7 @@
   "name": "Orderly Assistant",
   "slug": "assistant",
   "version": "0.1.0",
-  "description": "Asisten sistem bawaan untuk notifikasi, histori aksi, dan pengaturan akun Orderly.",
+  "description": "Asisten sistem bawaan dan satu-satunya antarmuka chat untuk mengelola akun serta Worker Instance yang diizinkan.",
   "publisher": { "name": "Orderly" },
   "assets": { "avatar": "assets/avatar.png" },
   "instance": { "default_name": "assistant" },

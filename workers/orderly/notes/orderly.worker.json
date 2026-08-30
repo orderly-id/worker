@@ -4,7 +4,7 @@
   "name": "Notes",
   "slug": "notes",
   "version": "0.3.0",
-  "description": "Simpan dan kelola catatan dalam satu Worker Instance.",
+  "description": "Simpan dan kelola catatan melalui Assistant Chat atau Workspace instance.",
   "publisher": {
     "name": "Orderly"
   },

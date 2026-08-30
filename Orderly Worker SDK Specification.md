@@ -182,6 +182,7 @@ ctx.instance.workerId
 ctx.instance.label
 ctx.instance.nameSegment
 ctx.instance.instanceName
+ctx.instance.route
 ctx.instance.ownerUsername
 ctx.instance.workerSlug
 ctx.instance.workerVersion
@@ -196,13 +197,15 @@ interface WorkerInstance {
   label: string | null;
   nameSegment: string;
   instanceName: string;
+  reference?: string;
+  route: string;
   ownerUsername: string;
   workerSlug: string;
   workerVersion: string;
 }
 ```
 
-`instanceName` is the complete public handle and MUST use `@{nameSegment}.{ownerUsername}`. It maps to `/{instanceName}` (for example `/@notes.rizalsambayu`). `label` is only an optional display label. SDK code MUST use `id` for storage, permission, and event scope. Instance creation is a Core lifecycle operation and MUST reject a second owned instance for the same user and Worker Definition.
+`instanceName` is the complete public handle and MUST use `@{nameSegment}.{ownerUsername}`. `route` is its symbol-free page `/instance/{nameSegment}.{ownerUsername}` (for example `/instance/notes.rizalsambayu`). `reference` MAY expose the conversational form `#notes.rizalsambayu`, but it is display/resolution metadata only. `label` is only an optional display label. SDK code MUST use `id` for storage, permission, and event scope. Instance creation is a Core lifecycle operation and MUST reject a second owned instance for the same user and Worker Definition.
 
 Example values:
 
@@ -221,6 +224,12 @@ notes
 
 instanceName:
 @notes.rizalsambayu
+
+reference:
+#notes.rizalsambayu
+
+route:
+/instance/notes.rizalsambayu
 
 ownerUsername:
 rizalsambayu
@@ -268,9 +277,9 @@ chat.message
 
 ---
 
-# 9. Chat Events
+# 9. Assistant Chat Events
 
-For chat-related handlers, the context SHOULD expose:
+For handlers invoked from Orderly Assistant Chat, the context SHOULD expose:
 
 ```ts
 ctx.message
@@ -300,13 +309,13 @@ interface ChatMessage {
 }
 ```
 
-Only data permitted by the active capabilities SHOULD be available.
+Only data permitted by the active capabilities SHOULD be available. The context MUST also identify the authenticated actor, Assistant instance, and resolved target Worker Instance. The target Worker does not receive its own chat surface.
 
 ---
 
 # 10. `onMessage`
 
-The primary conversational handler.
+The primary Assistant-mediated conversational handler.
 
 Example:
 
@@ -324,13 +333,13 @@ export default defineWorker({
 });
 ```
 
-`onMessage` SHOULD be invoked for permitted `chat.message` events.
+`onMessage` SHOULD be invoked for permitted `chat.message` events routed from Assistant to the selected target instance.
 
 ---
 
 # 11. `ctx.chat`
 
-Provides access to chat-related capabilities.
+Provides access to the current Assistant conversation. It MUST NOT create or imply an independent conversation owned by the target Worker Instance.
 
 Initial conceptual API:
 
@@ -354,7 +363,7 @@ These features MUST remain permission-controlled.
 
 # 12. `ctx.chat.reply()`
 
-Replies to the current conversation.
+Replies to the current Assistant conversation on behalf of the validated target execution.
 
 Example:
 

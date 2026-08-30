@@ -4,7 +4,7 @@
   "name": "FnB Order Management System",
   "slug": "fnb-oms",
   "version": "0.1.0",
-  "description": "Kelola katalog, pesanan, pelanggan, dan operasional bisnis makanan dan minuman melalui chat dan workspace.",
+  "description": "Kelola katalog, pesanan, pelanggan, dan operasional bisnis makanan dan minuman melalui Assistant Chat dan Workspace instance.",
   "publisher": { "name": "Orderly" },
   "assets": { "avatar": "assets/avatar.png" },
   "entry": "src/index.js",

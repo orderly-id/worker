@@ -7,14 +7,23 @@
 5. Tambahkan tes untuk happy path, input invalid, dan permission-sensitive behavior.
 6. Jalankan `npm run check` sebelum mengirim perubahan.
 
-Worker tidak boleh mengakses database Core, filesystem host, token user, atau Worker lain secara langsung. Gunakan `ctx.storage`, `ctx.chat`, `ctx.config`, `ctx.secrets`, `ctx.network`, dan kontrak action yang disediakan runtime.
+Worker tidak boleh mengakses database Core, filesystem host, token user, atau Worker lain secara langsung. Gunakan `ctx.storage`, `ctx.chat`, `ctx.config`, `ctx.secrets`, `ctx.network`, dan kontrak action yang disediakan runtime. Untuk Worker non-Assistant, `ctx.chat` mengembalikan hasil ke percakapan Assistant saat ini dan tidak membuat antarmuka chat milik instance.
 
 ## Identitas instance
 
-- Core membentuk nama publik dengan format `@{instance-name}.{owner-username}` dari `instance.default_name` dan username pemilik. Contoh Notes milik `@rizalsambayu` adalah `@notes.rizalsambayu`, dengan halaman publik `/@notes.rizalsambayu`.
+- Core membentuk nama publik dengan format `@{instance-name}.{owner-username}` dari `instance.default_name` dan username pemilik. Contoh Notes milik `@rizalsambayu` adalah `@notes.rizalsambayu`, dengan halaman tanpa simbol `/instance/notes.rizalsambayu`.
 - Satu user hanya boleh memiliki satu instance dari Worker Definition yang sama. Worker package tidak boleh mengakali batas ini dengan suffix acak.
 - Akses Editor atau Guest ke instance milik user lain adalah membership, bukan kepemilikan instance tambahan.
 - Worker harus memakai UUID instance dari runtime untuk penyimpanan, otorisasi, relasi, dan event. Nama publik hanya identitas yang dapat dibaca user.
+- Core membentuk reference percakapan `#instance.username` untuk pemilihan target di Assistant. Jangan menjadikannya route atau ID otorisasi.
+
+## Interaction surface
+
+- Jangan membuat halaman atau thread chat untuk Worker non-Assistant.
+- Sediakan prompt/action/schema agar Worker dapat digunakan melalui `@assistant.username`.
+- Sediakan Workspace untuk interaksi visual yang tidak cocok dilakukan melalui percakapan.
+- Pertahankan logika domain di paket Worker; Assistant hanya meresolusikan target, mengoordinasikan capability, dan menampilkan hasil.
+- Deklarasi capability otomatis tersedia untuk discovery setelah instance dibuat, tetapi permission tetap harus diberikan dan divalidasi Core.
 
 ## AI dan knowledge
 

@@ -63,7 +63,7 @@ Conceptually:
                          │
               ┌──────────┴──────────┐
               │                     │
-             Chat               Workspace
+      Assistant Chat            Workspace
               │                     │
               └──────────┬──────────┘
                          │
@@ -136,9 +136,9 @@ Example:
 @notes.rizalsambayu
 ```
 
-The public handle format is `@{instance-name}.{owner-username}` and the corresponding public page is `/@{instance-name}.{owner-username}`. Resolution MUST normalize both segments, find exactly one instance, and then continue with its internal UUID. A handle alone never proves authorization.
+The public handle format is `@{instance-name}.{owner-username}` and the corresponding symbol-free public page is `/instance/{instance-name}.{owner-username}`. Resolution MUST normalize both segments, find exactly one instance, and then continue with its internal UUID. A handle or route alone never proves authorization.
 
-After resolution, the path boundary has platform-level meaning: the exact root `/{public-instance-name}` resolves to the instance **Dashboard**, and `/{public-instance-name}/*` resolves within the instance **Workspace** namespace. Runtime route dispatch MUST preserve this distinction so a Worker cannot accidentally mount a Workspace screen as the Dashboard root.
+After resolution, the path boundary has platform-level meaning: the exact root `/instance/{instance-name}.{owner-username}` resolves to the instance **Dashboard**, and its descendant paths resolve within the instance **Workspace** namespace. `/assistant/{owner-username}` is reserved for Orderly Assistant. Runtime route dispatch MUST preserve this distinction so a Worker cannot accidentally mount a Workspace screen as the Dashboard root.
 
 The runtime and creation service MUST assume that an owner can own at most one instance of a Worker Definition. Database uniqueness for `(owner_user_id, worker_definition_id)` is the final concurrency guard; runtime pre-checks are only user-facing validation.
 
@@ -368,7 +368,7 @@ ctx.instance.workerSlug
 ctx.instance.workerVersion
 ```
 
-`instanceName` is always the complete public handle, such as `@notes.rizalsambayu`; `nameSegment` is the route-safe `notes` portion and `label` is an optional display label. Runtime authorization and storage scope still use `id`.
+`instanceName` is always the complete public handle, such as `@notes.rizalsambayu`; `route` is the symbol-free `/instance/notes.rizalsambayu`; `nameSegment` is the route-safe `notes` portion and `label` is an optional display label. Runtime authorization and storage scope still use `id`.
 
 Sensitive owner or member information SHOULD require explicit capabilities.
 
@@ -541,7 +541,7 @@ Worker routes declared in the manifest SHOULD be resolved through the Worker Gat
 Example:
 
 ```text
-GET /api/workers/@notes.rizalsambayu/notes
+GET /api/worker-instances/550e8400-e29b-41d4-a716-446655440000/notes
 ```
 
 Flow:
@@ -689,9 +689,9 @@ Workers MAY use the event ID to detect duplicate processing.
 
 ---
 
-# 27. Chat Runtime
+# 27. Assistant Chat Runtime
 
-Chat events SHOULD include only the data necessary for the Worker to process the event.
+Conversational events originate in Orderly Assistant Chat and SHOULD include only the data necessary for the selected Worker to process the event. The resolved target Worker Instance does not own or expose an independent chat interface.
 
 A Worker MUST NOT automatically receive unrelated conversation history.
 
@@ -705,6 +705,8 @@ chat:read-history
 ```
 
 Future permission names are defined elsewhere.
+
+The event envelope MUST distinguish the authenticated actor, Assistant instance, target Worker Instance, and conversation. A `#instance.username` reference is parsed only for target selection; authorization and runtime scope use the resolved target UUID.
 
 ---
 
@@ -1537,16 +1539,16 @@ Worker developers should depend on documented runtime APIs rather than internal 
 User sends:
 
 ```text
-@notes.rizalsambayu catat meeting jam 10
+#notes.rizalsambayu catat meeting jam 10
 ```
 
 Runtime flow:
 
 ```text
-Chat
+Assistant Chat
   │
   ▼
-Resolve @notes.rizalsambayu
+Resolve #notes.rizalsambayu to an authorized instance UUID
   │
   ▼
 Instance
@@ -1582,10 +1584,10 @@ Worker Storage
 ctx.chat.reply(...)
   │
   ▼
-Orderly Chat
+Orderly Assistant Chat
 ```
 
-The Worker never requires direct access to the Core database or Chat implementation.
+The Worker never requires direct access to the Core database or Chat implementation. `ctx.chat.reply(...)` returns output to the current Assistant conversation and MUST NOT create a target-instance chat thread.
 
 ---
 

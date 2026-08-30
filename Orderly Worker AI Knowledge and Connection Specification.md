@@ -10,6 +10,8 @@ Core owns trusted concerns: identity, authentication, instance resolution, autho
 
 AI is optional. A deterministic Worker MUST be able to use the same action, capability, event, storage, and connection contracts without an AI provider.
 
+Orderly Assistant is the only user-facing Worker chat interface. Non-Assistant Workers retain their domain AI, prompts, actions, storage, events, connections, and Workspaces, but conversational requests reach them through Assistant using a reference such as `#notes.username`. See `Orderly Worker Interaction Model.md`.
+
 ## 2. Instruction and context hierarchy
 
 Runtime MUST assemble AI context in this order:
@@ -149,7 +151,7 @@ A connection grant binds source instance, target instance, capability, role/scop
 Example:
 
 ```text
-@finance.user --notes.search/read--> @notes.user
+#finance.user --notes.search/read--> #notes.user
 ```
 
 If Notes contains “Kurangi rokok bulan ini”, Finance may request relevant goal notes after the owner grants read access, combine the result with authorized financial data, and cite the Notes source in its recommendation. Finance MUST NOT receive every note automatically or gain write/delete access unless separately granted.
@@ -168,9 +170,11 @@ Event subscriptions require an explicit connection/capability grant. Events SHOU
 
 ## 10. Conversation and memory
 
-Conversation context MUST be bounded, instance-scoped, role-aware, and intentionally selected. Short recent history may resolve references such as “that folder” while durable facts belong in Worker storage or knowledge, not hidden chat memory. Shared instance threads retain sender identity; private two-party Workers may use a simpler presentation without changing authorization.
+Conversation context MUST be bounded, target-instance-scoped, role-aware, and intentionally selected. Short recent Assistant history may resolve references such as “that folder” while durable facts belong in Worker storage or knowledge, not hidden chat memory. The execution envelope retains the authenticated actor even when multiple users can access the same target instance. A non-Assistant Worker does not own a separate thread.
 
 Workers SHOULD explicitly decide which facts become durable data. They MUST NOT silently convert every conversation into knowledge or send unrelated history to an AI provider.
+
+Assistant-level knowledge and target-instance knowledge MUST remain distinct. Connecting an instance registers discoverable typed capabilities; it does not merge that instance's documents, database, or prompt into Assistant memory.
 
 ## 11. Domain examples
 

@@ -1,10 +1,10 @@
 # Orderly Assistant Design Guide
 
-Status: proposal pengembangan, bukan kontrak stabil.
+Status: target architecture contract and incremental implementation guide.
 
 ## 1. Keputusan nama
 
-Nama Worker adalah **Orderly Assistant** dengan default instance name **`assistant`**. Sesuai kontrak Worker Instance, public handle dibentuk sebagai **`@assistant.{owner-username}`**. Contoh milik `@rizalsambayu` adalah `@assistant.rizalsambayu` dengan halaman `/@assistant.rizalsambayu`.
+Nama Worker adalah **Orderly Assistant** dengan default instance name **`assistant`**. Sesuai kontrak Worker Instance, public handle dibentuk sebagai **`@assistant.{owner-username}`**. Contoh milik `@rizalsambayu` adalah `@assistant.rizalsambayu` dengan halaman tanpa simbol `/assistant/rizalsambayu`.
 
 Setiap user memiliki tepat satu instance sistem Orderly Assistant. Handle bersifat global dan memuat username owner, sementara setiap instance MUST memiliki UUID internal unik dan owner user yang unik di database.
 
@@ -35,16 +35,22 @@ Orderly Assistant adalah Worker utama milik user dan menjadi titik koordinasi ma
 User → Orderly Assistant → Other Workers
 ```
 
-Implementasi saat ini hanya mempertahankan perilaku yang sudah tersedia, terutama notifikasi, undangan, chat, dan activity history. Delegasi atau kontrol Worker lain tidak boleh diasumsikan tersedia sampai ada capability, permission grant, audit, dan kontrak runtime yang eksplisit.
+Orderly Assistant adalah satu-satunya Worker yang memiliki antarmuka chat. Worker Instance lain tetap memiliki Dashboard dan Workspace, tetapi tidak memiliki thread atau halaman chat sendiri. Ia digunakan melalui Workspace atau dipanggil dari percakapan Assistant menggunakan reference `#instance.username`.
+
+Cutover awal sudah diterapkan di Core dan Vue: hanya Assistant yang tampil sebagai chat Worker, pesan baru non-Assistant ditolak, tindakan baru diproses melalui Assistant dengan target UUID terotorisasi, dan route publik memakai namespace tanpa simbol. Record chat per-instance lama tetap dipertahankan sebagai history read-only agar data user tidak dihapus diam-diam. Delegasi atau kontrol Worker lain di luar capability yang sudah terbukti tetap tidak boleh dianggap aktif sampai permission grant, audit, confirmation policy, dan kontrak runtime terkait benar-benar tersedia.
 
 ## 3. Chat dan Workspace
 
-Chat menyimpan percakapan interaktif. Dashboard `/@assistant.<username>` hanya menampilkan identitas dan ringkasan instance. Tombol Worker membuka menu `/workspace`; activity history tersedia pada `/workspace/notification`, sedangkan Access, Connect, Worker Information, Permissions, dan pengaturan berada pada `/setting`. Workspace Assistant menampilkan **activity history**, bukan salinan percakapan penuh, dan memakai shell UI yang sama dengan Worker Instance lain.
+Assistant Chat menyimpan percakapan interaktif dan menjadi conversational shell bersama untuk seluruh Worker milik atau yang dapat diakses user. Dashboard `/assistant/<username>` menampilkan identitas dan ringkasan instance. Tombol Worker membuka menu `/workspace`; activity history tersedia pada `/workspace/notification`, sedangkan Access, Connect, Worker Information, Permissions, dan pengaturan berada pada `/setting`. Workspace Assistant menampilkan **activity history**, bukan salinan percakapan penuh, dan memakai shell UI yang sama dengan Worker Instance lain.
+
+Reference `#instance.username`, misalnya `#notes.rizalsambayu`, hanya membantu Assistant memilih target. Ia bukan URL, ID internal, atau grant. Route target memakai `/instance/instance.username`, dan Core MUST menyelesaikan reference ke UUID lalu memverifikasi actor, membership, role, capability, dan confirmation policy.
+
+Jika reference tidak disebutkan, Assistant MAY menggunakan target aktif atau default yang tidak ambigu. Jika beberapa instance dapat memenuhi permintaan, Assistant MUST meminta klarifikasi. Assistant tidak boleh memindahkan logika domain Worker ke kumpulan `if/else`; target Worker tetap memiliki prompt, action schema, handler, knowledge, dan validasi domain.
 
 Contoh activity:
 
 ```text
-@temanmu mengundang Anda ke @notes.temanmu.
+@temanmu mengundang Anda ke #notes.temanmu.
 Anda menerima undangan sebagai Editor pukul 10.14.
 Anda mengubah tema profil menjadi hijau pukul 11.02.
 Anda menambahkan link GitHub “Project Saya” pukul 11.08.
@@ -58,7 +64,7 @@ Activity record SHOULD menyimpan jenis aksi, actor, target, status, ringkasan am
 Undangan workspace dikirim sebagai pesan sistem terstruktur di chat Assistant.
 
 ```text
-@temanmu mengundangmu ke workspace @notes.temanmu sebagai Editor.
+@temanmu mengundangmu ke workspace #notes.temanmu sebagai Editor.
 
 [Terima] [Tolak]
 ```
@@ -123,12 +129,14 @@ public_handle: @assistant.rizalsambayu
 system_managed: true
 ```
 
-Link dan event internal MUST menggunakan UUID, bukan hanya handle. Prefix/default instance name `assistant` untuk Worker Definition resmi Orderly Assistant bersifat reserved; user atau contributor tidak boleh mendaftarkannya untuk Worker lain. Public route mengikuti `/@assistant.{owner-username}`.
+Link internal yang mengotorisasi tindakan dan event MUST menggunakan UUID, bukan hanya handle atau route. Prefix/default instance name `assistant` untuk Worker Definition resmi Orderly Assistant bersifat reserved; user atau contributor tidak boleh mendaftarkannya untuk Worker lain. Public route mengikuti `/assistant/{owner-username}`.
+
+Untuk Worker non-Assistant, Assistant menerima reference `#instance.username`, tetapi hasil resolusi selalu berupa internal UUID. Reference tidak mengganti public Instance Name `@instance.username` atau route `/instance/instance.username`.
 
 ## 9. Lifecycle
 
 - dibuat otomatis setelah aktivasi akun;
-- selalu tersedia di Chat dan Worker List sesuai kebijakan UI;
+- selalu tersedia di Chat sebagai conversational Worker utama dan MAY tampil di Worker List sesuai kebijakan UI;
 - MAY dinonaktifkan notifikasi proaktifnya oleh user;
 - MUST NOT dapat dihapus permanen melalui UI biasa;
 - penghapusan akun mengikuti retensi dan cascade policy platform;
@@ -181,13 +189,13 @@ Event delivery, retries, deduplication, dan correlation ID mengikuti Runtime Spe
 5. Capability tema profil dan link profil.
 6. Directory public search.
 7. Provider AI dan pencarian eksternal.
-8. Worker-to-worker delegation dengan grant eksplisit.
+8. Cutover semua percakapan Worker baru ke Assistant Chat dan hentikan pembuatan thread non-Assistant.
+9. Worker-to-worker delegation dengan grant eksplisit.
 
 Instance identity, ownership, dan membership Assistant sudah diprovisikan melalui backend dan PostgreSQL. Pesan, activity history, dan sebagian read-state masih memakai `localStorage` sampai persistence server untuk area tersebut selesai.
 
 ## 13. Hal yang masih perlu diputuskan
 
-- apakah Assistant selalu terlihat di Worker List atau hanya Chat;
 - kebijakan retensi activity dan percakapan;
 - tindakan mana yang boleh auto-execute;
 - apakah `guest` identik dengan viewer atau perlu role `viewer` terpisah;
@@ -199,3 +207,5 @@ Instance identity, ownership, dan membership Assistant sudah diprovisikan melalu
 Orderly Assistant is the user's primary coordinator, but orchestration MUST use the same typed connection contract as other Workers. A connection lists granted capabilities per target instance; it does not expose target storage or create transitive authority. Assistant may search/read or request an action only when the target publishes that capability and the owner grants it. Financial, physical, sensitive, and irreversible calls remain subject to confirmation outside the model.
 
 Assistant instance instructions and knowledge use the lower-priority instance layer. They cannot override Orderly policy, package system instructions, permission grants, or audit requirements. Follow `Orderly Worker AI, Knowledge, and Connection Specification.md`.
+
+The complete addressing and surface contract is defined in `Orderly Worker Interaction Model.md`.

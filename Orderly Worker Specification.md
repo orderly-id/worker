@@ -15,7 +15,7 @@ A Worker can introduce functionality that does not exist in Orderly Core, includ
 - backend logic
 - data models
 - API endpoints
-- chat behaviors
+- Assistant-facing conversational behaviors
 - Workspace interfaces
 - scheduled tasks
 - integrations
@@ -141,7 +141,7 @@ An instance MAY have its own:
 - data
 - permissions
 - members
-- conversations
+- Assistant-facing action context
 - Workspace state
 - secrets
 - scheduled tasks
@@ -194,7 +194,7 @@ Finance Worker
 
 A **Workspace** is the rich graphical interface provided by a Worker Instance.
 
-Chat is intended for conversational interaction.
+Orderly Assistant Chat is intended for conversational interaction with every authorized Worker Instance. A non-Assistant Worker does not mount its own chat interface.
 
 Workspace is intended for interfaces requiring more complex interaction or visualization.
 
@@ -245,7 +245,7 @@ The Worker architecture consists of the following conceptual layers:
 ┌─────────────────────────────────────────────┐
 │                 Orderly Client              │
 │                                             │
-│           Chat            Workspace         │
+│     Assistant Chat        Workspace         │
 └─────────────┬─────────────────┬─────────────┘
               │                 │
               └────────┬────────┘
@@ -343,15 +343,15 @@ Additional examples:
 
 The owner-username suffix MUST be the normalized username of the owning user. The instance-name segment SHOULD default from Worker manifest metadata and MUST use a route-safe normalized form. Notes defaults to `notes`.
 
-The canonical public page MUST use the same handle:
+The canonical public page MUST use the symbol-free instance namespace:
 
 ```text
-/@notes.rizalsambayu
+/instance/notes.rizalsambayu
 ```
 
-The canonical page without a descendant path, `/@{instance-name}.{owner-username}`, MUST be treated as the instance **Dashboard**. It presents instance identity, summary metrics, and the entry point to the Worker. Every descendant page under `/@{instance-name}.{owner-username}/*` belongs to the instance **Workspace** area. The platform-standard `/workspace` route MUST present the instance Workspace menu, while `/setting` MUST consolidate General Setting, User Access, Instance Connect, Worker Information, and Permissions. Worker-specific screens such as Notes `/workspace/folder`, Assistant `/workspace/notification`, FnB `/catalog`, `/order`, and their nested pages MUST therefore be implemented as Workspace routes, not as alternate Dashboard roots. Workers MUST reuse the platform shell for navbar, section cards, spacing, status, and navigation while remaining free to define domain-specific content inside those screens.
+The canonical page without a descendant path, `/instance/{instance-name}.{owner-username}`, MUST be treated as the instance **Dashboard**. It presents instance identity, summary metrics, and the entry point to the Worker. Every descendant page under `/instance/{instance-name}.{owner-username}/*` belongs to the instance **Workspace** area. The platform-standard `/workspace` route MUST present the instance Workspace menu, while `/setting` MUST consolidate General Setting, User Access, Instance Connect, Worker Information, and Permissions. Worker-specific screens such as Notes `/workspace/folder`, FnB `/catalog`, `/order`, and their nested pages MUST therefore be implemented as Workspace routes, not as alternate Dashboard roots. Assistant is reserved at `/assistant/{owner-username}` and its descendant paths. Workers MUST reuse the platform shell for navbar, section cards, spacing, status, and navigation while remaining free to define domain-specific content inside those screens.
 
-Public Instance Names are lookup and routing identifiers. Internal authorization, storage scope, relations, and events MUST use the unique internal instance ID after resolution.
+Public Instance Names and routes are lookup identifiers. Internal authorization, storage scope, relations, and events MUST use the unique internal instance ID after resolution.
 
 ---
 
@@ -377,6 +377,16 @@ Changing the instance label MUST NOT require changing the Instance Name.
 Implementations SHOULD treat Instance Names as canonical public handles. If the owner username or instance-name segment changes, the platform MUST atomically update the canonical handle and SHOULD preserve an explicit redirect or tombstone policy; the internal UUID never changes.
 
 An owner MUST NOT create a second instance from the same Worker Definition. The storage layer MUST enforce uniqueness for `(owner_user_id, worker_definition_id)`, and creation APIs MUST return a deterministic conflict response. A membership granted to another user is access to the existing instance, not ownership of another instance.
+
+## 4.4 Conversational Instance Reference
+
+Assistant Chat MAY refer to a non-Assistant Worker Instance with:
+
+```text
+#instance.username
+```
+
+For example, `#notes.rizalsambayu` refers to the instance whose public name is `@notes.rizalsambayu` and route is `/instance/notes.rizalsambayu`. The `#` form is a mention/reference only. It MUST be resolved to the internal UUID and re-authorized for the current actor; it MUST NOT replace the route or become a database authority.
 
 ---
 
@@ -420,7 +430,7 @@ Instance Name
 @notes.rizalsambayu
 
 Public Page
-/@notes.rizalsambayu
+/instance/notes.rizalsambayu
 
 [ Create Instance ]
 ```
@@ -645,13 +655,13 @@ A Worker MUST NOT directly register arbitrary routes into Orderly Core.
 Conceptually:
 
 ```text
-/api/workers/:instance/*
+/api/worker-instances/:instance-id/*
 ```
 
 Example:
 
 ```text
-/api/workers/@notes.rizalsambayu/notes
+/api/worker-instances/550e8400-e29b-41d4-a716-446655440000/notes
 ```
 
 Request flow:
@@ -679,16 +689,16 @@ This allows new Worker APIs without requiring new Orderly Core routes for every 
 
 ---
 
-# 11. Chat
+# 11. Assistant-mediated Chat
 
-Workers MAY interact through Orderly Chat.
+Workers MAY provide conversational actions through Orderly Assistant Chat.
 
-A Worker Instance SHOULD be addressable similarly to other entities within the conversation system.
+A Worker Instance SHOULD be referenceable inside the Assistant conversation.
 
 Example:
 
 ```text
-@notes.rizalsambayu
+#notes.rizalsambayu
 ```
 
 A Worker MAY receive permitted events such as:
@@ -699,7 +709,7 @@ chat.command
 conversation.created
 ```
 
-Exact event names are defined by the Worker API specification.
+Exact event names are defined by the Worker API specification. The event context MUST include the authenticated actor, the user's Assistant, and resolved target instance. This does not create a chat interface or independent conversation for the target Worker.
 
 ---
 
@@ -1280,7 +1290,7 @@ Orderly creates:
 Notes
 Notes Worker
 @notes.rizalsambayu
-/@notes.rizalsambayu
+/instance/notes.rizalsambayu
 ```
 
 The resulting instance has independent:
@@ -1290,7 +1300,7 @@ identity
 data
 configuration
 permissions
-conversation
+Assistant-facing action context
 Workspace
 ```
 
@@ -1336,9 +1346,9 @@ Each Worker Instance should behave as an independent application instance.
 
 Workers should receive only the capabilities necessary for their declared functionality.
 
-### Conversation First
+### Assistant Conversation First
 
-Chat should remain a first-class way of interacting with Workers.
+Assistant Chat should remain a first-class way of interacting with Workers, while non-Assistant Workers expose no independent chat interface.
 
 ### Rich Interfaces When Needed
 
