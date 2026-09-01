@@ -106,7 +106,7 @@ export default defineWorker({
         const folder = inferredFolder(availableFolders, action, context?.state?.default_folder_id)
         if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tujuan tidak ditemukan')
         const title = humanName(action.title || content.slice(0, 80))
-        return envelope('create_note', action.reply || `Catatan disimpan di folder “${folder.name}”.`, [
+        return envelope('create_note', `Catatan “${title}” berhasil disimpan di folder “${folder.name}”.`, [
           operation('note', 'storage.create', 'notes', { folder_id: folder.id, title, content }),
         ], { note_id: { $result: 'note.id' }, folder_id: folder.id })
       }
@@ -114,7 +114,7 @@ export default defineWorker({
       case 'create_folder': {
         const name = humanName(action.folder)
         if (!name) throw new WorkerError('INVALID_FOLDER', 'Nama folder wajib diisi')
-        return envelope('create_folder', action.reply || `Folder “${name}” dibuat.`, [
+        return envelope('create_folder', `Folder “${name}” berhasil dibuat.`, [
           operation('folder', 'storage.create', 'folders', { name }),
         ], { folder_id: { $result: 'folder.id' } })
       }
@@ -123,7 +123,7 @@ export default defineWorker({
         const note = selectedNote(notes, action)
         const title = humanName(action.new_title)
         if (!note || !title) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan yang akan diubah tidak ditemukan')
-        return envelope('rename_note', action.reply || `Judul catatan diubah menjadi “${title}”.`, [
+        return envelope('rename_note', `Judul catatan “${note.title}” berhasil diubah menjadi “${title}”.`, [
           operation('note', 'storage.update', 'notes', { title }, note.id),
         ], { note_id: note.id })
       }
@@ -131,7 +131,7 @@ export default defineWorker({
       case 'delete_note': {
         const note = selectedNote(notes, action)
         if (!note) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan yang akan dihapus tidak ditemukan')
-        return envelope('delete_note', action.reply || `Catatan “${note.title}” dihapus.`, [
+        return envelope('delete_note', `Catatan “${note.title}” berhasil dihapus.`, [
           operation('note', 'storage.delete', 'notes', {}, note.id),
         ], { note_id: note.id })
       }
@@ -140,7 +140,7 @@ export default defineWorker({
         const note = selectedNote(notes, action)
         const folder = requestedFolder(folders, action)
         if (!note || !folder) throw new WorkerError('TARGET_NOT_FOUND', 'Catatan atau folder tujuan tidak ditemukan')
-        return envelope('move_note', action.reply || `Catatan “${note.title}” dipindahkan ke folder “${folder.name}”.`, [
+        return envelope('move_note', `Catatan “${note.title}” berhasil dipindahkan ke folder “${folder.name}”.`, [
           operation('note', 'storage.update', 'notes', { folder_id: folder.id }, note.id),
         ], { note_id: note.id, folder_id: folder.id })
       }
@@ -149,7 +149,7 @@ export default defineWorker({
         const folder = requestedFolder(folders, action)
         const name = humanName(action.new_folder)
         if (!folder || !name) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder yang akan diubah tidak ditemukan')
-        return envelope('rename_folder', action.reply || `Folder diubah menjadi “${name}”.`, [
+        return envelope('rename_folder', `Folder “${folder.name}” berhasil diubah menjadi “${name}”.`, [
           operation('folder', 'storage.update', 'folders', { name }, folder.id),
         ], { folder_id: folder.id })
       }
@@ -159,7 +159,7 @@ export default defineWorker({
         const note = selectedNote(notes, action)
         if (!note) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan tidak ditemukan')
         const important = action.action === 'mark_note_important'
-        return envelope(action.action, action.reply || `Catatan “${note.title}” ${important ? 'ditandai Important' : 'dihapus dari Important'}.`, [
+        return envelope(action.action, `Catatan “${note.title}” berhasil ${important ? 'ditandai sebagai Important' : 'dihapus dari Important'}.`, [
           operation('note', 'storage.update', 'notes', { important }, note.id),
         ], { note_id: note.id })
       }
@@ -169,7 +169,7 @@ export default defineWorker({
         const note = selectedNote(notes, action)
         if (!note) throw new WorkerError('NOTE_NOT_FOUND', 'Catatan tidak ditemukan')
         const archived = action.action === 'archive_note'
-        return envelope(action.action, action.reply || `Catatan “${note.title}” ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
+        return envelope(action.action, `Catatan “${note.title}” berhasil ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
           operation('note', 'storage.update', 'notes', { archived }, note.id),
         ], { note_id: note.id })
       }
@@ -179,7 +179,7 @@ export default defineWorker({
         const folder = requestedFolder(folders, action)
         if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tidak ditemukan')
         const important = action.action === 'mark_folder_important'
-        return envelope(action.action, action.reply || `Folder “${folder.name}” ${important ? 'ditandai Important' : 'dihapus dari Important'}.`, [
+        return envelope(action.action, `Folder “${folder.name}” berhasil ${important ? 'ditandai sebagai Important' : 'dihapus dari Important'}.`, [
           operation('folder', 'storage.update', 'folders', { important }, folder.id),
         ], { folder_id: folder.id })
       }
@@ -189,7 +189,7 @@ export default defineWorker({
         const folder = requestedFolder(folders, action)
         if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder tidak ditemukan')
         const archived = action.action === 'archive_folder'
-        return envelope(action.action, action.reply || `Folder “${folder.name}” ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
+        return envelope(action.action, `Folder “${folder.name}” berhasil ${archived ? 'diarsipkan' : 'dipulihkan'}.`, [
           operation('folder', 'storage.update', 'folders', { archived }, folder.id),
         ], { folder_id: folder.id })
       }
@@ -197,7 +197,7 @@ export default defineWorker({
       case 'delete_folder': {
         const folder = requestedFolder(folders, action)
         if (!folder) throw new WorkerError('FOLDER_NOT_FOUND', 'Folder yang akan dihapus tidak ditemukan')
-        return envelope('delete_folder', action.reply || `Folder “${folder.name}” dihapus.`, [
+        return envelope('delete_folder', `Folder “${folder.name}” berhasil dihapus.`, [
           operation('folder', 'storage.delete', 'folders', {}, folder.id),
         ], { folder_id: folder.id })
       }

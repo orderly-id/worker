@@ -28,7 +28,7 @@ export default defineWorker({
       case 'create_category': {
         const name = humanName(action.category)
         if (!name) throw new WorkerError('INVALID_CATEGORY', 'Nama kategori wajib diisi')
-        return envelope('create_category', action.reply || `Kategori “${name}” dibuat.`, [
+        return envelope('create_category', `Kategori “${name}” berhasil dibuat.`, [
           operation('category', 'storage.create', 'menu_categories', { name }),
         ], { category_id: { $result: 'category.id' } })
       }
@@ -36,14 +36,14 @@ export default defineWorker({
         const category = findCategory(state, action)
         const name = humanName(action.new_category)
         if (!category || !name) throw new WorkerError('CATEGORY_NOT_FOUND', 'Kategori tidak ditemukan')
-        return envelope('rename_category', action.reply || `Kategori diubah menjadi “${name}”.`, [
+        return envelope('rename_category', `Kategori “${category.name}” berhasil diubah menjadi “${name}”.`, [
           operation('category', 'storage.update', 'menu_categories', { name }, category.id),
         ], { category_id: category.id })
       }
       case 'delete_category': {
         const category = findCategory(state, action)
         if (!category) throw new WorkerError('CATEGORY_NOT_FOUND', 'Kategori tidak ditemukan')
-        return envelope('delete_category', action.reply || `Kategori “${category.name}” dihapus.`, [
+        return envelope('delete_category', `Kategori “${category.name}” berhasil dihapus.`, [
           operation('category', 'storage.delete', 'menu_categories', {}, category.id),
         ], { category_id: category.id })
       }
@@ -52,7 +52,7 @@ export default defineWorker({
         const name = humanName(action.name)
         if (!category || !name || !Number.isInteger(action.price) || action.price < 0) throw new WorkerError('INVALID_ITEM', 'Kategori, nama, dan harga menu wajib diisi')
         const input = { category_id: category.id, name, description: clean(action.description), price: action.price, available: action.available !== false }
-        return envelope('create_menu_item', action.reply || `${name} ditambahkan ke “${category.name}”.`, [
+        return envelope('create_menu_item', `Menu “${name}” berhasil ditambahkan ke kategori “${category.name}”.`, [
           operation('item', 'storage.create', 'menu_items', input),
         ], { item_id: { $result: 'item.id' }, category_id: category.id })
       }
@@ -68,14 +68,14 @@ export default defineWorker({
         if (typeof action.available === 'boolean') input.available = action.available
         if (category) input.category_id = category.id
         if (!Object.keys(input).length) throw new WorkerError('EMPTY_UPDATE', 'Tidak ada perubahan menu')
-        return envelope('update_menu_item', action.reply || `Menu “${item.name}” diperbarui.`, [
+        return envelope('update_menu_item', `Menu “${item.name}” berhasil diperbarui.`, [
           operation('item', 'storage.update', 'menu_items', input, item.id),
         ], { item_id: item.id })
       }
       case 'delete_menu_item': {
         const item = findItem(state, action)
         if (!item) throw new WorkerError('ITEM_NOT_FOUND', 'Menu tidak ditemukan')
-        return envelope('delete_menu_item', action.reply || `Menu “${item.name}” dihapus.`, [
+        return envelope('delete_menu_item', `Menu “${item.name}” berhasil dihapus.`, [
           operation('item', 'storage.delete', 'menu_items', {}, item.id),
         ], { item_id: item.id })
       }

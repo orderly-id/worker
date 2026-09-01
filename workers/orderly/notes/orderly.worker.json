@@ -3,7 +3,7 @@
   "id": "wrk_01k2notes000000000000000001",
   "name": "Notes",
   "slug": "notes",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Simpan dan kelola catatan melalui Assistant Chat atau Workspace instance.",
   "publisher": {
     "name": "Orderly"
@@ -25,7 +25,7 @@
   ],
   "ai": {
     "provider": "platform",
-    "prompt_version": "1.0.0",
+    "prompt_version": "1.0.1",
     "system_prompt_file": "prompts/system.md",
     "action_schema_file": "prompts/action.schema.json",
     "examples_file": "prompts/examples.json"

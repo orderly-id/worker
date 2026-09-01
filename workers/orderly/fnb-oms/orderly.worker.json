@@ -3,7 +3,7 @@
   "id": "wrk_01k2menucafe00000000000001",
   "name": "FnB Order Management System",
   "slug": "fnb-oms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Kelola katalog, pesanan, pelanggan, dan operasional bisnis makanan dan minuman melalui Assistant Chat dan Workspace instance.",
   "publisher": { "name": "Orderly" },
   "assets": { "avatar": "assets/avatar.png" },
@@ -14,7 +14,7 @@
   "events": ["chat.message"],
   "ai": {
     "provider": "platform",
-    "prompt_version": "1.0.0",
+    "prompt_version": "1.0.1",
     "system_prompt_file": "prompts/system.md",
     "action_schema_file": "prompts/action.schema.json",
     "examples_file": "prompts/examples.json"

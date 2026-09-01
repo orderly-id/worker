@@ -45,6 +45,24 @@ test('plans a validated storage capability instead of mutating Core directly', a
   assert.equal(envelope.operations[0].resource, 'notes')
   assert.equal(envelope.operations[0].input.folder_id, 'work-id')
   assert.equal(envelope.operations[0].input.title, 'Rencana kerja')
+  assert.equal(envelope.reply, 'Catatan “Rencana kerja” berhasil disimpan di folder “Kerja”.')
+  assert.doesNotMatch(envelope.reply, /\bakan\b/i)
+})
+
+test('reports a completed move instead of repeating a future-tense AI reply', async () => {
+  const envelope = await dispatchWorkerAction(worker, {
+    action: 'move_note',
+    note_id: 'note-id',
+    folder_id: 'archive-id',
+    reply: 'Catatan akan dipindahkan.',
+  }, {
+    state: {
+      folders: [{ id: 'archive-id', name: 'Arsip' }],
+      notes: [{ id: 'note-id', title: 'Rencana', folder_id: 'default-id', content: 'Isi' }],
+    },
+  })
+
+  assert.equal(envelope.reply, 'Catatan “Rencana” berhasil dipindahkan ke folder “Arsip”.')
 })
 
 test('rejects a hallucinated explicit folder id instead of falling back', async () => {
